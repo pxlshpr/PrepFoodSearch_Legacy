@@ -1,0 +1,104 @@
+{
+  "pins" : [
+    {
+      "identity" : "activityindicatorview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/ActivityIndicatorView",
+      "state" : {
+        "revision" : "0fb57e69b6130b4beb8ba49eaafe13563f2f6bd6",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "foodlabel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/FoodLabel",
+      "state" : {
+        "revision" : "07b36f81c44d0cda1f1e4b298c1bb705d9ed03aa",
+        "version" : "0.0.23"
+      }
+    },
+    {
+      "identity" : "foodlabelcamera",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/FoodLabelCamera",
+      "state" : {
+        "revision" : "2172e52934fd1e7f73aa3b2490e3282082cf3301",
+        "version" : "0.0.15"
+      }
+    },
+    {
+      "identity" : "foodlabelscanner",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/FoodLabelScanner",
+      "state" : {
+        "revision" : "98b0d32c7dcc8445ac984efd71e82e1eb07478c5",
+        "version" : "0.0.67"
+      }
+    },
+    {
+      "identity" : "prepunits",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/PrepUnits",
+      "state" : {
+        "revision" : "37e68aa934929523bf11e42bde8592bba320b78f",
+        "version" : "0.0.91"
+      }
+    },
+    {
+      "identity" : "rsbarcodes_swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yeahdongcn/RSBarcodes_Swift",
+      "state" : {
+        "revision" : "86d8b1a1439e7edb19793d17732b15fd784a0a15",
+        "version" : "5.1.1"
+      }
+    },
+    {
+      "identity" : "swifthaptics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/SwiftHaptics",
+      "state" : {
+        "revision" : "47ed14412dcd109f124cb7b3b88e3fc8f60569e7",
+        "version" : "0.1.2"
+      }
+    },
+    {
+      "identity" : "swiftsugar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/SwiftSugar",
+      "state" : {
+        "revision" : "367629613def1bb61e378e402082559eeaf2a7c6",
+        "version" : "0.0.67"
+      }
+    },
+    {
+      "identity" : "swiftuicamera",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/SwiftUICamera",
+      "state" : {
+        "revision" : "f621800a973457ab5ec8caf595d6b3df0bf69da6",
+        "version" : "0.0.33"
+      }
+    },
+    {
+      "identity" : "swiftuisugar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/SwiftUISugar",
+      "state" : {
+        "revision" : "439700ba56418091d97d3b2d18317d7f109f216b",
+        "version" : "0.0.194"
+      }
+    },
+    {
+      "identity" : "visionsugar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/VisionSugar",
+      "state" : {
+        "revision" : "240da8f4eff92d36429472a8ea63144f262174b7",
+        "version" : "0.0.72"
+      }
+    }
+  ],
+  "version" : 2
+}
