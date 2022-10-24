@@ -1,6 +1,7 @@
 import SwiftUI
 import Camera
 import ActivityIndicatorView
+import PrepUnits
 
 public struct FoodSearch: View {
     
@@ -11,6 +12,12 @@ public struct FoodSearch: View {
     public var body: some View {
         searchableView
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
+            .sheet(isPresented: $viewModel.showingFood) { foodView }
+    }
+    
+    var foodView: some View {
+        FoodView()
+            .environmentObject(viewModel)
     }
     
     var searchableView: some View {
@@ -63,10 +70,15 @@ public struct FoodSearch: View {
     var resultsContents: some View {
         Group {
             ForEach(viewModel.results) { result in
-                FoodSearchResultCell(searchResult: result)
-                    .onAppear {
-                        viewModel.loadMoreContentIfNeeded(currentResult: result)
-                    }
+                Button {
+                    viewModel.present(result)
+                } label: {
+                    FoodSearchResultCell(searchResult: result)
+                }
+                .buttonStyle(.borderless)
+                .onAppear {
+                    viewModel.loadMoreContentIfNeeded(currentResult: result)
+                }
             }
             if viewModel.isLoadingPage {
                 HStack {

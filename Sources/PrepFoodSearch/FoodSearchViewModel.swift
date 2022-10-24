@@ -6,6 +6,8 @@ import SwiftSugar
 
 class FoodSearchViewModel: ObservableObject {
     
+    let networkController = NetworkController.server
+    
     @Published var searchText: String = ""
     
     @Published var results = [FoodSearchResult]()
@@ -13,11 +15,29 @@ class FoodSearchViewModel: ObservableObject {
     private var currentPage = 1
     private var canLoadMorePages = true
     
+    var foods: [PrepFood] = []
+    
+    @Published var foodIdBeingPresented: UUID? = nil
+    @Published var foodBeingPresented: PrepFood? = nil
+    @Published var showingFood = false
+
     init() {
+    }
+    
+    func present(_ result: FoodSearchResult) {
+        /// See if we already have the food—otherwise, start a task to retrieve it
+        if let food = foods.first(where: { $0.id == result.id }) {
+            foodBeingPresented = food
+        } else {
+            //TODO: Get the food here
+        }
+        foodIdBeingPresented = result.id
+        showingFood = true
     }
     
     func search() {
         results = []
+        foods = []
         currentPage = 1
         canLoadMorePages = true
         isLoadingPage = false
@@ -45,26 +65,59 @@ class FoodSearchViewModel: ObservableObject {
         
         Task {
             let params = ServerFoodSearchParams(string: searchText, page: currentPage, per: 25)
-            print("Getting page: \(currentPage)")
-            let page = try await NetworkController.server.searchFoods(params: params)
-//            try await sleepTask(2)
+            let page = try await networkController.searchFoods(params: params)
             await MainActor.run {
-                if currentPage == 1 {
-                    Haptics.successFeedback()
-                } else {
-                    Haptics.feedback(style: .soft)
-                }
-                self.canLoadMorePages = page.hasMorePages
-                self.isLoadingPage = false
-                if currentPage == 1 {
-                    withAnimation {
-                        self.results.append(contentsOf: page.items)
+                self.didReceive(page)
+            }
+        }
+    }
+    
+    func didReceive(_ page: FoodsPage) {
+        if currentPage == 1 {
+            Haptics.successFeedback()
+        } else {
+            Haptics.feedback(style: .soft)
+        }
+        
+        canLoadMorePages = page.hasMorePages
+        isLoadingPage = false
+        
+        add(page.items)
+        currentPage += 1
+    }
+    
+    func add(_ newResults: [FoodSearchResult]) {
+        if currentPage == 1 {
+            withAnimation {
+                results.append(contentsOf: newResults)
+            }
+        } else {
+            results.append(contentsOf: newResults)
+        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.getFoods(for: newResults)
+//        }
+    }
+    
+    func getFoods(for results: [FoodSearchResult]) {
+        Task {
+            do {
+                let newFoods = try await networkController.foods(for: results)
+                foods.append(contentsOf: newFoods)
+                
+                if let foodIdBeingPresented,
+                   let food = newFoods.first(where: { $0.id == foodIdBeingPresented })
+                {
+                    await MainActor.run {
+                        withAnimation {
+                            foodBeingPresented = food
+                        }
                     }
-                } else {
-                    self.results.append(contentsOf: page.items)
                 }
-                self.currentPage += 1
+            } catch {
+                print("Error getting foods: \(error)")
             }
         }
     }
 }
+

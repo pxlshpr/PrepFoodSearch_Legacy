@@ -11,6 +11,7 @@ struct FoodSearchResultCell: View {
         HStack {
             emojiText
             nameTexts
+                .multilineTextAlignment(.leading)
             Spacer()
         }
         .listRowBackground(listRowBackground)
