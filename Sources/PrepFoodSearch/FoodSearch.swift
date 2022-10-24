@@ -14,10 +14,16 @@ public struct FoodSearch: View {
     
     @State private var path: [FoodSearchResult] = []
     
+    @State var foodToPresent: PrepFood? = nil
+    
     public var body: some View {
         searchableView
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
             .sheet(isPresented: $showingFilters) { filtersSheet }
+            .sheet(item: $foodToPresent) { food in
+                FoodView(food)
+                    .environmentObject(viewModel)
+            }
     }
     
     var filtersSheet: some View {
@@ -123,9 +129,12 @@ public struct FoodSearch: View {
     }
     
     var barcodeScanner: some View {
-        BarcodeScanner { barcodes, image in
-            if let string = barcodes.first?.string {
-                self.viewModel.searchText = string
+        BarcodeScanner { barcodes in
+            Task {
+                let food = try await viewModel.search(for: barcodes)
+                await MainActor.run {
+                    self.foodToPresent = food
+                }
             }
         }
     }

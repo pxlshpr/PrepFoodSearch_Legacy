@@ -3,6 +3,7 @@ import PrepNetworkController
 import PrepUnits
 import SwiftHaptics
 import SwiftSugar
+import VisionSugar
 
 class FoodSearchViewModel: ObservableObject {
     
@@ -102,3 +103,9 @@ class FoodSearchViewModel: ObservableObject {
     }
 }
 
+extension FoodSearchViewModel {
+    func search(for barcodes: [RecognizedBarcode]) async throws -> PrepFood {
+        let payloads = barcodes.map { $0.string }
+        return try await networkController.findFood(for: payloads)
+    }
+}
