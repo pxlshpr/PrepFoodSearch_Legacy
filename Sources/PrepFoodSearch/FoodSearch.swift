@@ -99,6 +99,7 @@ public struct FoodSearch: View {
                 Button {
                     Haptics.feedback(style: .soft)
                     path.append(result)
+                    searchIsFocused = false
                 } label: {
                     FoodSearchResultCell(searchResult: result)
                         .buttonStyle(.borderless)

@@ -3,6 +3,52 @@ import SwiftHaptics
 import SwiftUISugar
 import PrepUnits
 
+struct MacrosBar: View {
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    let carb, fat, protein: Double
+    
+    init(_ searchResult: FoodSearchResult) {
+        self.carb = searchResult.carb
+        self.fat = searchResult.fat
+        self.protein = searchResult.protein
+    }
+    
+    let width: CGFloat = 30
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            Color.clear
+                .frame(width: carbWidth)
+                .background(Macro.carb.fillColor(for: colorScheme).gradient)
+            Color.clear
+                .frame(width: fatWidth)
+                .background(Macro.fat.fillColor(for: colorScheme).gradient)
+            Color.clear
+                .frame(width: proteinWidth)
+                .background(Macro.protein.fillColor(for: colorScheme).gradient)
+        }
+        .frame(width: width, height: 10)
+        .cornerRadius(2)
+    }
+    
+    var totalEnergy: CGFloat {
+        (carb * KcalsPerGramOfCarb) + (protein * KcalsPerGramOfProtein) + (fat * KcalsPerGramOfFat)
+    }
+    var carbWidth: CGFloat {
+        ((carb * KcalsPerGramOfCarb) / totalEnergy) * width
+    }
+    
+    var proteinWidth: CGFloat {
+        ((protein * KcalsPerGramOfProtein) / totalEnergy) * width
+    }
+    
+    var fatWidth: CGFloat {
+        ((fat * KcalsPerGramOfFat) / totalEnergy) * width
+    }
+}
+
 struct FoodSearchResultCell: View {
     
     let searchResult: FoodSearchResult
@@ -13,8 +59,13 @@ struct FoodSearchResultCell: View {
             nameTexts
                 .multilineTextAlignment(.leading)
             Spacer()
+            macrosBar
         }
         .listRowBackground(listRowBackground)
+    }
+    
+    var macrosBar: some View {
+        MacrosBar(searchResult)
     }
     
     var listRowBackgroundColor: Color {
@@ -73,22 +124,41 @@ struct FoodSearchResultCellPreview: View {
                     name: "Gold Emblem",
                     emoji: "🍬",
                     detail: "Fruit Flavored Snacks!, Green Apple, Grape, Black Cherry, Orange, Green Apple, Grape, Black Cherry, Orange",
-                    brand: "Cvs Pharmacy, Inc.")
-                )
+                    brand: "Cvs Pharmacy, Inc.",
+                    carb: 45,
+                    fat: 2,
+                    protein: 1
+                ))
                 FoodSearchResultCell(searchResult: .init(
                     id: UUID(),
                     name: "Golden Beer Battered White Meat Chicken Strip Shaped Patties With Mashed Potatoes And Mixed Vegetables - Includes A Chocolate Brownie",
-                    emoji: "🍬",
+                    emoji: "🍗",
                     detail: "Beer Battered Chicken",
-                    brand: "Campbell Soup Company")
-                )
+                    brand: "Campbell Soup Company",
+                    carb: 25,
+                    fat: 6,
+                    protein: 45
+                ))
                 FoodSearchResultCell(searchResult: .init(
                     id: UUID(),
                     name: "Golden Brown All Natural Pork Sausage Patties",
-                    emoji: "🥧",
+                    emoji: "🐷",
                     detail: "Mild, Minimum 18 Patties/Bag, 28 Oz.",
-                    brand: "Jones Dairy Farm")
-                )
+                    brand: "Jones Dairy Farm",
+                    carb: 4,
+                    fat: 36,
+                    protein: 22
+                ))
+                FoodSearchResultCell(searchResult: .init(
+                    id: UUID(),
+                    name: "Banana",
+                    emoji: "🍌",
+                    detail: "Cavendish, peeled",
+                    carb: 4,
+                    fat: 36,
+                    protein: 22
+                ))
+
             }
         }
     }

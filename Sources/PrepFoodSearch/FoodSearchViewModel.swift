@@ -43,12 +43,14 @@ class FoodSearchViewModel: ObservableObject {
     
     private func loadMoreContent() {
         guard !isLoadingPage && canLoadMorePages else {
+            print("✨ Not loading more — isLoadingPage: \(isLoadingPage), canLoadMorePages: \(canLoadMorePages)")
             return
         }
         
         isLoadingPage = true
         
         Task {
+            print("✨ Sending request for page: \(currentPage)")
             let params = ServerFoodSearchParams(string: searchText, page: currentPage, per: 25)
             let page = try await networkController.searchFoods(params: params)
             await MainActor.run {
