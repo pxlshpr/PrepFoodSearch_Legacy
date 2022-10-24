@@ -41,6 +41,10 @@ public struct FoodSearch: View {
                 })
                 .navigationTitle("Food Search")
                 .navigationBarTitleDisplayMode(.inline)
+                .navigationDestination(for: FoodSearchResult.self) { result in
+                    FoodView(result)
+                        .environmentObject(viewModel)
+                }
         }
 
 //        SearchableView(
@@ -92,14 +96,9 @@ public struct FoodSearch: View {
     var resultsContents: some View {
         Group {
             ForEach(viewModel.results) { result in
-                NavigationLink(product.title) {
-                    ProductDetailView(product: product)
-                }
-                NavigationLink {
-                    FoodView(result)
-                        .environmentObject(viewModel)
-//                    Haptics.feedback(style: .soft)
-//                    viewModel.present(result)
+                Button {
+                    Haptics.feedback(style: .soft)
+                    path.append(result)
                 } label: {
                     FoodSearchResultCell(searchResult: result)
                         .buttonStyle(.borderless)
