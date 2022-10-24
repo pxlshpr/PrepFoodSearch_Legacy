@@ -8,24 +8,37 @@ struct FoodView: View {
     
     @EnvironmentObject var foodSearchViewModel: FoodSearchViewModel
 
+    @State var result: FoodSearchResult
+    @State var food: PrepFood? = nil
+
+    init(_ result: FoodSearchResult) {
+        _result = State(initialValue: result)
+    }
+    
     var body: some View {
-        if let food = foodSearchViewModel.foodBeingPresented {
-            foodContents(for: food)
-        } else {
-            loadingContents
+        Group {
+            if let food {
+                foodContents(for: food)
+            } else {
+                loadingContents
+            }
+        }
+        .onAppear {
+            if let food = foodSearchViewModel.foods.first(where: { $0.id == result.id }) {
+                self.food = food
+            } else {
+                //TODO: Do the task business here
+            }
         }
     }
     
     func foodContents(for food: PrepFood) -> some View {
-        NavigationView {
-            FormStyledScrollView {
-                detailSection(for: food)
-                foodLabelSection(for: food)
-            }
-            .navigationTitle("Food")
-            .navigationBarTitleDisplayMode(.inline)
+        FormStyledScrollView {
+            detailSection(for: food)
+            foodLabelSection(for: food)
         }
-        .transition(.move(edge: .top))
+        .navigationTitle("Food")
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     func detailSection(for food: PrepFood) -> some View {

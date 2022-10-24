@@ -2,6 +2,7 @@ import SwiftUI
 import Camera
 import ActivityIndicatorView
 import PrepUnits
+import SwiftHaptics
 
 public struct FoodSearch: View {
     
@@ -9,30 +10,49 @@ public struct FoodSearch: View {
     @State var showingBarcodeScanner = false
     @State var searchIsFocused = false
     
+    @State var showingFilters = false
+    
     public var body: some View {
         searchableView
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
-            .sheet(isPresented: $viewModel.showingFood) { foodView }
+            .sheet(isPresented: $showingFilters) { filtersSheet }
     }
     
-    var foodView: some View {
-        FoodView()
-            .environmentObject(viewModel)
+    var filtersSheet: some View {
+        FiltersSheet()
     }
     
     var searchableView: some View {
-        SearchableView(
-            searchText: $viewModel.searchText,
-            prompt: "Search Foods",
-            focused: $searchIsFocused,
-            didSubmit: didSubmit,
-            buttonViews: {
-                filterButton
-                scanButton
-            },
-            content: {
-                navigationView
-            })
+        NavigationView {
+            SearchableView(
+                searchText: $viewModel.searchText,
+                prompt: "Search Foods",
+                focused: $searchIsFocused,
+                didSubmit: didSubmit,
+                buttonViews: {
+                    filterButton
+                    scanButton
+                },
+                content: {
+                    list
+        //            scrollView
+                })
+                .navigationTitle("Food Search")
+                .navigationBarTitleDisplayMode(.inline)
+        }
+
+//        SearchableView(
+//            searchText: $viewModel.searchText,
+//            prompt: "Search Foods",
+//            focused: $searchIsFocused,
+//            didSubmit: didSubmit,
+//            buttonViews: {
+//                filterButton
+//                scanButton
+//            },
+//            content: {
+//                navigationView
+//            })
         
     }
     
@@ -70,12 +90,15 @@ public struct FoodSearch: View {
     var resultsContents: some View {
         Group {
             ForEach(viewModel.results) { result in
-                Button {
-                    viewModel.present(result)
+                NavigationLink {
+                    FoodView(result)
+                        .environmentObject(viewModel)
+//                    Haptics.feedback(style: .soft)
+//                    viewModel.present(result)
                 } label: {
                     FoodSearchResultCell(searchResult: result)
+                        .buttonStyle(.borderless)
                 }
-                .buttonStyle(.borderless)
                 .onAppear {
                     viewModel.loadMoreContentIfNeeded(currentResult: result)
                 }
@@ -114,7 +137,7 @@ public struct FoodSearch: View {
     
     var filterButton: some View {
         Button {
-            
+            showingFilters = true
         } label: {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .imageScale(.large)

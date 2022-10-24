@@ -8,7 +8,7 @@ class FoodSearchViewModel: ObservableObject {
     
     let networkController = NetworkController.server
     
-    @Published var searchText: String = ""
+    @Published var searchText: String = "Banana"
     
     @Published var results = [FoodSearchResult]()
     @Published var isLoadingPage = false
@@ -17,22 +17,7 @@ class FoodSearchViewModel: ObservableObject {
     
     var foods: [PrepFood] = []
     
-    @Published var foodIdBeingPresented: UUID? = nil
-    @Published var foodBeingPresented: PrepFood? = nil
-    @Published var showingFood = false
-
     init() {
-    }
-    
-    func present(_ result: FoodSearchResult) {
-        /// See if we already have the food—otherwise, start a task to retrieve it
-        if let food = foods.first(where: { $0.id == result.id }) {
-            foodBeingPresented = food
-        } else {
-            //TODO: Get the food here
-        }
-        foodIdBeingPresented = result.id
-        showingFood = true
     }
     
     func search() {
@@ -104,16 +89,6 @@ class FoodSearchViewModel: ObservableObject {
             do {
                 let newFoods = try await networkController.foods(for: results)
                 foods.append(contentsOf: newFoods)
-                
-                if let foodIdBeingPresented,
-                   let food = newFoods.first(where: { $0.id == foodIdBeingPresented })
-                {
-                    await MainActor.run {
-                        withAnimation {
-                            foodBeingPresented = food
-                        }
-                    }
-                }
             } catch {
                 print("Error getting foods: \(error)")
             }

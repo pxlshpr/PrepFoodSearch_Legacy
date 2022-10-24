@@ -1,3 +1,4 @@
+
 import SwiftUI
 import SwiftSugar
 import SwiftHaptics
@@ -105,8 +106,19 @@ public struct SearchableView<Content: View>: View {
         isFocused = true
     }
 
-    var keyboardColor: Color {
-        colorScheme == .light ? Color(hex: colorHexKeyboardLight) : Color(hex: colorHexKeyboardDark)
+    var keyboardColor: some View {
+        Group {
+            if !isFocused {
+                Color.clear
+                    .background(
+                        .ultraThinMaterial
+                    )
+    //            return Color.accentColor
+    //                .opacity(0.5)
+            } else {
+                colorScheme == .light ? Color(hex: colorHexKeyboardLight) : Color(hex: colorHexKeyboardDark)
+            }
+        }
     }
 
     var textFieldColor: Color {
