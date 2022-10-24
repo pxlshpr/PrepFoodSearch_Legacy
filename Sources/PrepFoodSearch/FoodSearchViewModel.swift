@@ -35,7 +35,7 @@ class FoodSearchViewModel: ObservableObject {
             return
         }
         
-        let thresholdIndex = results.index(results.endIndex, offsetBy: -5)
+        let thresholdIndex = results.index(results.endIndex, offsetBy: -10)
         if results.firstIndex(where: { $0.id == result.id }) == thresholdIndex {
             loadMoreContent()
         }
@@ -72,15 +72,19 @@ class FoodSearchViewModel: ObservableObject {
     }
     
     func add(_ newResults: [FoodSearchResult]) {
+        /// Filter out the results that definitely don't exist in our current array before appending it (to avoid duplicates)
+        let trulyNewResults = newResults.filter { newResult in
+            !results.contains(where: { $0.id == newResult.id })
+        }
         if currentPage == 1 {
             withAnimation {
-                results.append(contentsOf: newResults)
+                results.append(contentsOf: trulyNewResults)
             }
         } else {
-            results.append(contentsOf: newResults)
+            results.append(contentsOf: trulyNewResults)
         }
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.getFoods(for: newResults)
+            self.getFoods(for: trulyNewResults)
 //        }
     }
     

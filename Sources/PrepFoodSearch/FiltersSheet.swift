@@ -323,9 +323,22 @@ var allDatabases: [Filter] = [
         selectedSystemImageColor: .blue,
         isSelected: true
     ),
-    Filter(name: "Your Database", isSelected: true),
-    Filter(name: "USDA"),
-    Filter(name: "AUSNUT")
+    Filter(
+        name: "Your Database",
+        systemImage: "person",
+        selectedSystemImage: "person.fill",
+        isSelected: true
+    ),
+    Filter(
+        name: "USDA",
+        systemImage: "text.book.closed",
+        selectedSystemImage: "text.book.closed.fill"
+    ),
+    Filter(
+        name: "AUSNUT",
+        systemImage: "text.book.closed",
+        selectedSystemImage: "text.book.closed.fill"
+    )
 ]
 
 var allTypes: [Filter] = [
