@@ -257,7 +257,7 @@ struct FiltersSheet: View {
             .navigationTitle("Search Settings")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.height(400)])
         .presentationDragIndicator(.hidden)
     }
     

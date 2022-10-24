@@ -12,6 +12,8 @@ public struct FoodSearch: View {
     
     @State var showingFilters = false
     
+    @State private var path: [FoodSearchResult] = []
+    
     public var body: some View {
         searchableView
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
@@ -23,7 +25,7 @@ public struct FoodSearch: View {
     }
     
     var searchableView: some View {
-        NavigationView {
+        NavigationStack(path: $path) {
             SearchableView(
                 searchText: $viewModel.searchText,
                 prompt: "Search Foods",
@@ -90,6 +92,9 @@ public struct FoodSearch: View {
     var resultsContents: some View {
         Group {
             ForEach(viewModel.results) { result in
+                NavigationLink(product.title) {
+                    ProductDetailView(product: product)
+                }
                 NavigationLink {
                     FoodView(result)
                         .environmentObject(viewModel)
