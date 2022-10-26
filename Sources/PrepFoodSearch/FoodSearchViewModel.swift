@@ -1,13 +1,13 @@
 import SwiftUI
 import PrepNetworkController
-import PrepUnits
+import PrepDataTypes
 import SwiftHaptics
 import SwiftSugar
 import VisionSugar
 
 class FoodSearchViewModel: ObservableObject {
     
-    let networkController = NetworkController.server
+//    let networkController = NetworkController.server
     
     @Published var searchText: String = "Banana"
     
@@ -16,14 +16,14 @@ class FoodSearchViewModel: ObservableObject {
     private var currentPage = 1
     private var canLoadMorePages = true
     
-    var foods: [PrepFood] = []
+//    var foods: [PrepFood] = []
     
     init() {
     }
     
     func search() {
         results = []
-        foods = []
+//        foods = []
         currentPage = 1
         canLoadMorePages = true
         isLoadingPage = false
@@ -52,27 +52,27 @@ class FoodSearchViewModel: ObservableObject {
         
         Task {
             print("✨ Sending request for page: \(currentPage)")
-            let params = ServerFoodSearchParams(string: searchText, page: currentPage, per: 25)
-            let page = try await networkController.searchFoods(params: params)
-            await MainActor.run {
-                self.didReceive(page)
-            }
+//            let params = ServerFoodSearchParams(string: searchText, page: currentPage, per: 25)
+//            let page = try await networkController.searchFoods(params: params)
+//            await MainActor.run {
+//                self.didReceive(page)
+//            }
         }
     }
     
-    func didReceive(_ page: FoodsPage) {
-        if currentPage == 1 {
-            Haptics.successFeedback()
-        } else {
-            Haptics.feedback(style: .soft)
-        }
-        
-        canLoadMorePages = page.hasMorePages
-        isLoadingPage = false
-        
-        add(page.items)
-        currentPage += 1
-    }
+//    func didReceive(_ page: FoodsPage) {
+//        if currentPage == 1 {
+//            Haptics.successFeedback()
+//        } else {
+//            Haptics.feedback(style: .soft)
+//        }
+//        
+//        canLoadMorePages = page.hasMorePages
+//        isLoadingPage = false
+//        
+//        add(page.items)
+//        currentPage += 1
+//    }
     
     func add(_ newResults: [FoodSearchResult]) {
         /// Filter out the results that definitely don't exist in our current array before appending it (to avoid duplicates)
@@ -94,8 +94,8 @@ class FoodSearchViewModel: ObservableObject {
     func getFoods(for results: [FoodSearchResult]) {
         Task {
             do {
-                let newFoods = try await networkController.foods(for: results)
-                foods.append(contentsOf: newFoods)
+//                let newFoods = try await networkController.foods(for: results)
+//                foods.append(contentsOf: newFoods)
             } catch {
                 print("Error getting foods: \(error)")
             }
@@ -104,8 +104,8 @@ class FoodSearchViewModel: ObservableObject {
 }
 
 extension FoodSearchViewModel {
-    func search(for barcodes: [RecognizedBarcode]) async throws -> PrepFood {
-        let payloads = barcodes.map { $0.string }
-        return try await networkController.findFood(for: payloads)
-    }
+//    func search(for barcodes: [RecognizedBarcode]) async throws -> PrepFood {
+//        let payloads = barcodes.map { $0.string }
+//        return try await networkController.findFood(for: payloads)
+//    }
 }

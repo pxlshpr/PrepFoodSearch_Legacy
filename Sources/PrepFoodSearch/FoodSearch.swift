@@ -1,8 +1,9 @@
 import SwiftUI
 import Camera
 import ActivityIndicatorView
-import PrepUnits
+import PrepDataTypes
 import SwiftHaptics
+import SwiftUISugar
 
 public struct FoodSearch: View {
     
@@ -14,16 +15,16 @@ public struct FoodSearch: View {
     
     @State private var path: [FoodSearchResult] = []
     
-    @State var foodToPresent: PrepFood? = nil
+//    @State var foodToPresent: PrepFood? = nil
     
     public var body: some View {
         searchableView
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
             .sheet(isPresented: $showingFilters) { filtersSheet }
-            .sheet(item: $foodToPresent) { food in
-                FoodView(food)
-                    .environmentObject(viewModel)
-            }
+//            .sheet(item: $foodToPresent) { food in
+//                FoodView(food)
+//                    .environmentObject(viewModel)
+//            }
     }
     
     var filtersSheet: some View {
@@ -47,10 +48,10 @@ public struct FoodSearch: View {
                 })
                 .navigationTitle("Food Search")
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(for: FoodSearchResult.self) { result in
-                    FoodView(result)
-                        .environmentObject(viewModel)
-                }
+//                .navigationDestination(for: FoodSearchResult.self) { result in
+//                    FoodView(result)
+//                        .environmentObject(viewModel)
+//                }
         }
 
 //        SearchableView(
@@ -130,12 +131,12 @@ public struct FoodSearch: View {
     
     var barcodeScanner: some View {
         BarcodeScanner { barcodes in
-            Task {
-                let food = try await viewModel.search(for: barcodes)
-                await MainActor.run {
-                    self.foodToPresent = food
-                }
-            }
+//            Task {
+//                let food = try await viewModel.search(for: barcodes)
+//                await MainActor.run {
+//                    self.foodToPresent = food
+//                }
+//            }
         }
     }
     

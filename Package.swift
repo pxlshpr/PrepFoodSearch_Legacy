@@ -16,12 +16,11 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pxlshpr/SwiftUICamera", from: "0.0.35"),
-        .package(url: "https://github.com/pxlshpr/PrepUnits", from: "0.0.136"),
+        .package(url: "https://github.com/pxlshpr/PrepDataTypes", from: "0.0.23"),
         .package(url: "https://github.com/pxlshpr/PrepNetworkController", from: "0.0.21"),
-        .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.69"),
-        .package(url: "https://github.com/pxlshpr/FoodLabel", from: "0.0.23"),
-//        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.194"),
-//        .package(url: "https://github.com/yeahdongcn/RSBarcodes_Swift", from: "5.1.1"),
+        .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.74"),
+        .package(url: "https://github.com/pxlshpr/FoodLabel", from: "0.0.25"),
+        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.196"),
         .package(url: "https://github.com/exyte/ActivityIndicatorView", from: "1.1.0"),
     ],
     targets: [
@@ -31,13 +30,12 @@ let package = Package(
             name: "PrepFoodSearch",
             dependencies: [
                 .product(name: "Camera", package: "swiftuicamera"),
-                .product(name: "PrepUnits", package: "prepunits"),
+                .product(name: "PrepDataTypes", package: "prepdatatypes"),
                 .product(name: "PrepNetworkController", package: "prepnetworkcontroller"),
                 .product(name: "SwiftSugar", package: "swiftsugar"),
                 .product(name: "FoodLabel", package: "foodlabel"),
-//                .product(name: "RSBarcodes_Swift", package: "rsbarcodes_swift"),
                 .product(name: "ActivityIndicatorView", package: "activityindicatorview"),
-//                .product(name: "SwiftUISugar", package: "swiftuisugar"),
+                .product(name: "SwiftUISugar", package: "swiftuisugar"),
 
             ]),
         .testTarget(
