@@ -4,7 +4,7 @@ import SwiftHaptics
 import SwiftUISugar
 
 public struct FoodSearch: View {
-    
+    @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
     @State var showingBarcodeScanner = false
     @State var searchIsFocused = false
@@ -17,13 +17,25 @@ public struct FoodSearch: View {
         searchableView
 //            .navigationTitle("Hello")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { principalContent }
+            .toolbar { principalToolbar }
+            .toolbar { leadingToolbar }
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
             .sheet(isPresented: $showingFilters) { filtersSheet }
     }
     
+    var leadingToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarLeading) {
+            Button {
+                Haptics.feedback(style: .soft)
+                dismiss()
+            } label: {
+                closeButtonLabel
+            }
+        }
+    }
+    
     @State var foodType: String = "Foods"
-    var principalContent: some ToolbarContent {
+    var principalToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
             HStack {
                 Text("Search")
