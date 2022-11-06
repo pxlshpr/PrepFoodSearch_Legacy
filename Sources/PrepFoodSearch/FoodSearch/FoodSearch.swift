@@ -24,6 +24,9 @@ public struct FoodSearch: View {
             .toolbar { leadingToolbar }
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
             .sheet(isPresented: $showingFilters) { filtersSheet }
+            .onChange(of: isComparing) { newValue in
+                searchIsFocused = false
+            }
     }
     
     var leadingToolbar: some ToolbarContent {
