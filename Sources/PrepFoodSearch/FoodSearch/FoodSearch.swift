@@ -18,20 +18,36 @@ public struct FoodSearch: View {
     
     @State var isComparing = false
     
+    @State var hasAppeared = false
+    
     public init(searchManager: SearchManager) {
         self.searchManager = searchManager
     }
     
+    @ViewBuilder
     public var body: some View {
-        searchableView
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { trailingContent }
-            .toolbar { principalContent }
-            .toolbar { leadingToolbar }
-            .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
-            .sheet(isPresented: $showingFilters) { filtersSheet }
-            .onChange(of: isComparing, perform: isComparingChanged)
-//            .interactiveDismissDisabled(searchIsFocused)
+        ZStack {
+            if !hasAppeared {
+                Color(.systemGroupedBackground)
+            } else {
+                searchableView
+                    .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
+                    .sheet(isPresented: $showingFilters) { filtersSheet }
+                    .onChange(of: isComparing, perform: isComparingChanged)
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation {
+                    hasAppeared = true
+                }
+            }
+        }
+        .transition(.opacity)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { trailingContent }
+        .toolbar { principalContent }
+        .toolbar { leadingToolbar }
     }
     
     @ViewBuilder
