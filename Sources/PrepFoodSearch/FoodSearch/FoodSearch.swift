@@ -13,11 +13,14 @@ public struct FoodSearch: View {
     @State var searchingVerified = false
     @State var searchingDatasets = false
     
+    @State var isComparing = false
+    
     public var body: some View {
         searchableView
-//            .navigationTitle("Hello")
+//            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { principalToolbar }
+            .toolbar { trailingContent }
+            .toolbar { principalContent }
             .toolbar { leadingToolbar }
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
             .sheet(isPresented: $showingFilters) { filtersSheet }
@@ -34,18 +37,49 @@ public struct FoodSearch: View {
         }
     }
     
-    @State var foodType: String = "Foods"
-    var principalToolbar: some ToolbarContent {
+    var title: String {
+        return isComparing ? "Select Foods to Compare" : "Search"
+    }
+    
+    var principalContent: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
-            HStack {
-                Text("Search")
-                    .font(.headline)
-                Picker("", selection: $foodType) {
-                    Text("Foods").tag("Foods")
-                    Text("Recipes").tag("Recipes")
-                    Text("Plates").tag("Plates")
+            Group {
+                if isComparing {
+                    Text(title)
+                        .font(.headline)
+                } else {
+                    Picker(selection: $foodType) {
+                        Label("Foods", systemImage: "carrot").tag("Foods")
+                            .labelStyle(.titleAndIcon)
+                        Label("Recipes", systemImage: "note.text").tag("Recipes")
+                            .labelStyle(.titleAndIcon)
+                        Label("Plates", systemImage: "fork.knife").tag("Plates")
+                            .labelStyle(.titleAndIcon)
+                    } label: {
+                        Text("Hello")
+                            .background(Color.green)
+                    }
+                    .pickerStyle(.menu)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .contentShape(Rectangle())
+                    .simultaneousGesture(TapGesture().onEnded {
+                        Haptics.feedback(style: .soft)
+                    })
                 }
-                .pickerStyle(.segmented)
+            }
+        }
+    }
+    
+    @State var foodType: String = "Foods"
+    var trailingContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarTrailing) {
+            Button {
+                Haptics.feedback(style: .medium)
+                withAnimation {
+                    isComparing.toggle()
+                }
+            } label: {
+                Label("Compare", systemImage: "rectangle.portrait.on.rectangle.portrait.angled\(isComparing ? ".fill" : "")")
             }
         }
     }
@@ -56,6 +90,7 @@ public struct FoodSearch: View {
             prompt: "Search Foods",
             focused: $searchIsFocused,
             focusOnAppear: true,
+            isHidden: $isComparing,
             didSubmit: didSubmit,
             buttonViews: {
                 filterButton
@@ -65,18 +100,6 @@ public struct FoodSearch: View {
                 list
             })
     }
-}
-
-
-
-public struct FoodSearchPreview: View {
-    public var body: some View {
-        NavigationView {
-            FoodSearch()
-        }
-    }
-    
-    public init() { }
 }
 
 struct FoodSearch_Previews: PreviewProvider {
