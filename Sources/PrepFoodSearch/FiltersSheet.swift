@@ -366,12 +366,12 @@ struct Filter: Identifiable {
     var selectedSystemImageColor: Color? = nil
     var isSelected: Bool = false {
         didSet {
-            Haptics.transientHaptic()
+            Haptics.feedback(style: .soft)
         }
     }
     
     mutating func toggle() {
-        Haptics.transientHaptic()
+        Haptics.feedback(style: .soft)
         isSelected.toggle()
     }
 }
