@@ -15,6 +15,10 @@ public struct FoodSearch: View {
     
     @State var isComparing = false
     
+    public init() {
+        
+    }
+    
     public var body: some View {
         searchableView
 //            .navigationTitle(title)
