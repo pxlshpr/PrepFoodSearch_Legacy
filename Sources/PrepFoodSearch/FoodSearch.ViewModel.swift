@@ -4,6 +4,7 @@ import PrepDataTypes
 import SwiftHaptics
 import SwiftSugar
 import VisionSugar
+import SwiftHaptics
 
 enum ResultGroupType {
     case myFoods
@@ -212,9 +213,7 @@ extension FoodSearch {
         }
         .listStyle(.plain)
     }
-    
-    
-    
+        
     var list: some View {
         List {
             Section(header: myFoodsHeader) {
@@ -226,20 +225,27 @@ extension FoodSearch {
                 FoodCell(emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 FoodCell(emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 FoodCell(emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                Button {
-                    
-                } label: {
-                    Text("Load More")
-                        .font(.subheadline)
+                Group {
+                    if searchingVerified {
+                        HStack {
+                            ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
+                                .frame(width: 27, height: 27)
+                                .foregroundColor(.secondary)
+                                .offset(y: -2)
+                        }
                         .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        Button {
+                            Haptics.feedback(style: .rigid)
+                            searchingVerified = true
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 30))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                        .buttonStyle(.borderless)
+                    }
                 }
-                .buttonStyle(.borderless)
-//                HStack {
-//                    ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-//                        .frame(width: 20, height: 20)
-//                        .foregroundColor(.secondary)
-//                }
-//                .frame(maxWidth: .infinity, alignment: .center)
             }
             Section(header: publicDatasetsHeader) {
                 FoodCell(emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
@@ -247,22 +253,28 @@ extension FoodSearch {
                 FoodCell(emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 FoodCell(emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 FoodCell(emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                Button {
-                    
-                } label: {
-                    Text("Load More")
-                        .font(.subheadline)
+                Group {
+                    if searchingDatasets {
+                        HStack {
+                            ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
+                                .frame(width: 27, height: 27)
+                                .foregroundColor(.secondary)
+                                .offset(y: -2)
+                        }
                         .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        Button {
+                            Haptics.feedback(style: .rigid)
+                            searchingDatasets = true
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.system(size: 30))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        }
+                        .buttonStyle(.borderless)
+                    }
                 }
-                .buttonStyle(.borderless)
-//                HStack {
-//                    ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-//                        .frame(width: 20, height: 20)
-//                        .foregroundColor(.secondary)
-//                }
-//                .frame(maxWidth: .infinity, alignment: .center)
             }
-//            resultsContents
         }
         .safeAreaInset(edge: .bottom) {
             Spacer().frame(height: 66)
