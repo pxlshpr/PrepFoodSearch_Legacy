@@ -82,8 +82,17 @@ public struct FoodSearch: View {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
             Button {
                 Haptics.feedback(style: .medium)
-                withAnimation {
-                    isComparing.toggle()
+                if searchIsFocused {
+                    searchIsFocused = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        withAnimation {
+                            isComparing.toggle()
+                        }
+                    }
+                } else {
+                    withAnimation {
+                        isComparing.toggle()
+                    }
                 }
             } label: {
                 Label("Compare", systemImage: "rectangle.portrait.on.rectangle.portrait.angled\(isComparing ? ".fill" : "")")
@@ -96,7 +105,7 @@ public struct FoodSearch: View {
             searchText: $viewModel.searchText,
             prompt: "Search Foods",
             focused: $searchIsFocused,
-            focusOnAppear: true,
+            focusOnAppear: false,
             isHidden: $isComparing,
             didSubmit: didSubmit,
             buttonViews: {
