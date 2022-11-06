@@ -91,11 +91,11 @@ public struct FoodSearch: View {
 //            Label("Create a Food", systemImage: "plus")
         }
         return Group {
-            Section {
-                Text("Search over 1 million foods in our database.")
-                .foregroundColor(.secondary)
-                .listRowSeparator(.hidden)
-            }
+//            Section {
+//                Text("Search over 1 million foods in our database.")
+//                .foregroundColor(.secondary)
+//                .listRowSeparator(.hidden)
+//            }
             Section(header: createHeader) {
                 Button {
                     
