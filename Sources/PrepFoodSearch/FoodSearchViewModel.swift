@@ -5,21 +5,27 @@ import SwiftHaptics
 import SwiftSugar
 import VisionSugar
 
-class FoodSearchViewModel: ObservableObject {
+extension FoodSearch {
     
-//    let networkController = NetworkController.server
-    
-    @Published var searchText: String = "Banana"
-    
-    @Published var results = [FoodSearchResult]()
-    @Published var isLoadingPage = false
-    private var currentPage = 1
-    private var canLoadMorePages = true
-    
-//    var foods: [PrepFood] = []
-    
-    init() {
+    class ViewModel: ObservableObject {
+        
+//        let networkController = NetworkController.server
+        
+        @Published var searchText: String = "Banana"
+        
+        @Published var results = [FoodSearchResult]()
+        @Published var isLoadingPage = false
+        private var currentPage = 1
+        private var canLoadMorePages = true
+        
+//        var foods: [PrepFood] = []
+        
+        init() {
+        }
     }
+}
+
+extension FoodSearch.ViewModel{
     
     func search() {
         results = []
@@ -66,10 +72,10 @@ class FoodSearchViewModel: ObservableObject {
 //        } else {
 //            Haptics.feedback(style: .soft)
 //        }
-//        
+//
 //        canLoadMorePages = page.hasMorePages
 //        isLoadingPage = false
-//        
+//
 //        add(page.items)
 //        currentPage += 1
 //    }
@@ -87,7 +93,7 @@ class FoodSearchViewModel: ObservableObject {
             results.append(contentsOf: trulyNewResults)
         }
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.getFoods(for: trulyNewResults)
+//            self.getFoods(for: trulyNewResults)
 //        }
     }
     
@@ -103,7 +109,7 @@ class FoodSearchViewModel: ObservableObject {
     }
 }
 
-extension FoodSearchViewModel {
+extension FoodSearch.ViewModel {
 //    func search(for barcodes: [RecognizedBarcode]) async throws -> PrepFood {
 //        let payloads = barcodes.map { $0.string }
 //        return try await networkController.findFood(for: payloads)
