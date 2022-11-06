@@ -89,12 +89,6 @@ public struct FoodSearch: View {
                 allMyFoodsSection
             }
             createSection
-            createSection
-            createSection
-            createSection
-            createSection
-            createSection
-            createSection
         }
     }
     
