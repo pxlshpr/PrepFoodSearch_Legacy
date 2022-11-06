@@ -15,7 +15,7 @@ public struct FoodSearch: View {
     
     public var body: some View {
         searchableView
-//            .navigationTitle("Search Foods")
+//            .navigationTitle("Hello")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { principalContent }
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
@@ -25,12 +25,16 @@ public struct FoodSearch: View {
     @State var foodType: String = "Foods"
     var principalContent: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
-            Picker("", selection: $foodType) {
-                Text("Foods").tag("Foods")
-                Text("Recipes").tag("Recipes")
-                Text("Plates").tag("Plates")
+            HStack {
+                Text("Search")
+                    .font(.headline)
+                Picker("", selection: $foodType) {
+                    Text("Foods").tag("Foods")
+                    Text("Recipes").tag("Recipes")
+                    Text("Plates").tag("Plates")
+                }
+                .pickerStyle(.segmented)
             }
-            .pickerStyle(.segmented)
         }
     }
     
@@ -51,3 +55,20 @@ public struct FoodSearch: View {
     }
 }
 
+
+
+public struct FoodSearchPreview: View {
+    public var body: some View {
+        NavigationView {
+            FoodSearch()
+        }
+    }
+    
+    public init() { }
+}
+
+struct FoodSearch_Previews: PreviewProvider {
+    static var previews: some View {
+        FoodSearchPreview()
+    }
+}

@@ -307,20 +307,3 @@ extension FoodSearch {
     }
 
 }
-
-
-public struct FoodSearchPreview: View {
-    public var body: some View {
-        NavigationView {
-            FoodSearch()
-        }
-    }
-    
-    public init() { }
-}
-
-struct FoodSearch_Previews: PreviewProvider {
-    static var previews: some View {
-        FoodSearchPreview()
-    }
-}
