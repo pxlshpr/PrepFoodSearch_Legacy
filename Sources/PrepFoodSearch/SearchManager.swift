@@ -33,6 +33,8 @@ public class SearchManager: ObservableObject {
     var currentPage = 1
     var canLoadMorePages = true
     
-    public init() {
+    public init(recents: [Food] = [], allMyFoods: [Food] = []) {
+        self.recents = recents
+        self.allMyFoods = allMyFoods
     }
 }

@@ -72,30 +72,22 @@ public struct FoodSearch: View {
     
     @ViewBuilder
     var emptySearchContents: some View {
-        if !searchManager.recents.isEmpty {
-            recentsSection
-        } else if !searchManager.allMyFoods.isEmpty {
-            allMyFoodsSection
-        } else {
-            noDeviceFoodsSection
+        Group {
+            if !searchManager.recents.isEmpty {
+                recentsSection
+            } else if !searchManager.allMyFoods.isEmpty {
+                allMyFoodsSection
+            }
+            createSection
         }
     }
     
-    var noDeviceFoodsSection: some View {
-        noDeviceFoodsCell
-    }
-
-    var noDeviceFoodsCell: some View {
+    var createSection: some View {
         var createHeader: some View {
             Text("Create a Food")
 //            Label("Create a Food", systemImage: "plus")
         }
         return Group {
-//            Section {
-//                Text("Search over 1 million foods in our database.")
-//                .foregroundColor(.secondary)
-//                .listRowSeparator(.hidden)
-//            }
             Section(header: createHeader) {
                 Button {
                     
@@ -147,7 +139,9 @@ public struct FoodSearch: View {
         }
         
         return Section(header: header) {
-            Text("Recents")
+            ForEach(searchManager.recents, id: \.self) {
+                FoodCell(food: $0, isComparing: $isComparing)
+            }
         }
     }
     
@@ -272,7 +266,20 @@ enum SearchStep {
 
 public struct FoodSearchPreview: View {
     
-    @StateObject var searchManager = SearchManager()
+    @StateObject var searchManager: SearchManager
+    
+    public init() {
+        let foods = [
+            Food(mockName: "Cheese", emoji: "🧀"),
+            Food(mockName: "KFC Leg", emoji: "🍗"),
+            Food(mockName: "Carrot", emoji: "🥕"),
+            Food(mockName: "Beans", emoji: "🫘"),
+            Food(mockName: "Brinjal", emoji: "🍆"),
+        ]
+        
+        let searchManager = SearchManager(recents: foods)
+        _searchManager = StateObject(wrappedValue: searchManager)
+    }
     
     public var body: some View {
         NavigationView {
@@ -390,7 +397,7 @@ public struct FoodSearchPreview: View {
         ]
     }
 
-    public init() { }
+//    public init() { }
 }
 
 struct FoodSearch_Previews: PreviewProvider {
