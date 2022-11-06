@@ -19,10 +19,10 @@ extension FoodSearch {
         .frame(maxWidth: .infinity, alignment: .center)
     }
     
-    var loadMoreCell: some View {
+    func loadMoreCell(_ action: @escaping (() -> ())) -> some View {
         Button {
             Haptics.feedback(style: .rigid)
-            searchingVerified = true
+            action()
         } label: {
             Image(systemName: "ellipsis")
                 .font(.system(size: 30))
@@ -291,18 +291,4 @@ struct FoodCell_Previews: PreviewProvider {
     static var previews: some View {
         FoodCellPreview()
     }
-}
-
-
-
-public struct FoodSearchPreview: View {
-    
-    
-    public var body: some View {
-        NavigationView {
-            FoodSearch(searchManager: SearchManager.shared)
-        }
-    }
-    
-    public init() { }
 }

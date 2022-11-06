@@ -20,9 +20,3 @@ extension FoodSearch {
             })
     }
 }
-
-struct FoodSearch_Previews: PreviewProvider {
-    static var previews: some View {
-        FoodSearchPreview()
-    }
-}
