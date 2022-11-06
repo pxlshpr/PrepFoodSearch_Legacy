@@ -5,7 +5,7 @@ import SwiftUISugar
 
 public struct FoodSearch: View {
     @Environment(\.dismiss) var dismiss
-    @StateObject var viewModel = ViewModel()
+    @ObservedObject var searchManager: SearchManager
     @State var showingBarcodeScanner = false
     @State var searchIsFocused = false
     @State var showingFilters = false
@@ -15,8 +15,8 @@ public struct FoodSearch: View {
     
     @State var isComparing = false
     
-    public init() {
-        
+    public init(searchManager: SearchManager) {
+        self.searchManager = searchManager
     }
     
     public var body: some View {
@@ -103,7 +103,7 @@ public struct FoodSearch: View {
     
     var searchableView: some View {
         SearchableView(
-            searchText: $viewModel.searchText,
+            searchText: $searchManager.searchText,
             prompt: "Search Foods",
             focused: $searchIsFocused,
             focusOnAppear: false,

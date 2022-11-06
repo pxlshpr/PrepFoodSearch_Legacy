@@ -10,7 +10,7 @@ import Foundation
 extension FoodSearch {
 
     func didSubmit() {
-        viewModel.search()
+        searchManager.search()
     }
 
 }

@@ -1,50 +1,10 @@
 import SwiftUI
-import PrepNetworkController
 import PrepDataTypes
-import SwiftHaptics
-import SwiftSugar
-import VisionSugar
-import SwiftHaptics
 
-enum ResultGroupType {
-    case myFoods
-    case verified
-    case datasets
-}
-
-struct ResultGroup {
-    let type: ResultGroupType
-    let results: [FoodSearchResult] = []
-}
-
-extension FoodSearch {
-    
-    class ViewModel: ObservableObject {
-        
-//        let networkController = NetworkController.server
-        
-        @Published var searchText: String = "Banana"
-        
-        @Published var results = [FoodSearchResult]()
-
-        @Published var resultGroups: [ResultGroup] = []
-        
-        @Published var isLoadingPage = false
-        private var currentPage = 1
-        private var canLoadMorePages = true
-        
-//        var foods: [PrepFood] = []
-        
-        init() {
-        }
-    }
-}
-
-extension FoodSearch.ViewModel{
+extension SearchManager {
     
     func search() {
         results = []
-//        foods = []
         currentPage = 1
         canLoadMorePages = true
         isLoadingPage = false
@@ -122,11 +82,4 @@ extension FoodSearch.ViewModel{
             }
         }
     }
-}
-
-extension FoodSearch.ViewModel {
-//    func search(for barcodes: [RecognizedBarcode]) async throws -> PrepFood {
-//        let payloads = barcodes.map { $0.string }
-//        return try await networkController.findFood(for: payloads)
-//    }
 }

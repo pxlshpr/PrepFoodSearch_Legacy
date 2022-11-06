@@ -8,7 +8,7 @@ extension FoodSearch {
 
     var resultsContents: some View {
         Group {
-            ForEach(viewModel.results) { result in
+            ForEach(searchManager.results) { result in
                 Button {
                     Haptics.feedback(style: .soft)
                     searchIsFocused = false
@@ -17,10 +17,10 @@ extension FoodSearch {
                         .buttonStyle(.borderless)
                 }
                 .onAppear {
-                    viewModel.loadMoreContentIfNeeded(currentResult: result)
+                    searchManager.loadMoreContentIfNeeded(currentResult: result)
                 }
             }
-            if viewModel.isLoadingPage {
+            if searchManager.isLoadingPage {
                 HStack {
                     Spacer()
                     ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
@@ -63,10 +63,10 @@ extension FoodSearch {
     var barcodeScanner: some View {
         BarcodeScanner { barcodes in
             if let barcode = barcodes.first {
-                viewModel.searchText = barcode.string
+                searchManager.searchText = barcode.string
             }
 //            Task {
-//                let food = try await viewModel.search(for: barcodes)
+//                let food = try await searchManager.search(for: barcodes)
 //                await MainActor.run {
 //                    self.foodToPresent = food
 //                }
@@ -353,9 +353,11 @@ struct FoodCell_Previews: PreviewProvider {
 
 
 public struct FoodSearchPreview: View {
+    
+    
     public var body: some View {
         NavigationView {
-            FoodSearch()
+            FoodSearch(searchManager: SearchManager.shared)
         }
     }
     
