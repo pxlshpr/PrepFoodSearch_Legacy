@@ -96,24 +96,26 @@ extension FoodSearch {
                 FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 Group {
-                    if searchingVerified {
-                        HStack {
-                            ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-                                .frame(width: 27, height: 27)
-                                .foregroundColor(.secondary)
-                                .offset(y: -2)
+                    if !isComparing {
+                        if searchingVerified {
+                            HStack {
+                                ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
+                                    .frame(width: 27, height: 27)
+                                    .foregroundColor(.secondary)
+                                    .offset(y: -2)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        } else {
+                            Button {
+                                Haptics.feedback(style: .rigid)
+                                searchingVerified = true
+                            } label: {
+                                Image(systemName: "ellipsis")
+                                    .font(.system(size: 30))
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }
+                            .buttonStyle(.borderless)
                         }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    } else {
-                        Button {
-                            Haptics.feedback(style: .rigid)
-                            searchingVerified = true
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 30))
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
-                        .buttonStyle(.borderless)
                     }
                 }
             }
@@ -124,24 +126,26 @@ extension FoodSearch {
                 FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
                 Group {
-                    if searchingDatasets {
-                        HStack {
-                            ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-                                .frame(width: 27, height: 27)
-                                .foregroundColor(.secondary)
-                                .offset(y: -2)
+                    if !isComparing {
+                        if searchingDatasets {
+                            HStack {
+                                ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
+                                    .frame(width: 27, height: 27)
+                                    .foregroundColor(.secondary)
+                                    .offset(y: -2)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        } else {
+                            Button {
+                                Haptics.feedback(style: .rigid)
+                                searchingDatasets = true
+                            } label: {
+                                Image(systemName: "ellipsis")
+                                    .font(.system(size: 30))
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                            }
+                            .buttonStyle(.borderless)
                         }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    } else {
-                        Button {
-                            Haptics.feedback(style: .rigid)
-                            searchingDatasets = true
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .font(.system(size: 30))
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
-                        .buttonStyle(.borderless)
                     }
                 }
             }
