@@ -31,6 +31,7 @@ public struct FoodSearch: View {
             .onChange(of: isComparing) { newValue in
                 searchIsFocused = false
             }
+            .interactiveDismissDisabled(searchIsFocused)
     }
     
     var leadingToolbar: some ToolbarContent {
