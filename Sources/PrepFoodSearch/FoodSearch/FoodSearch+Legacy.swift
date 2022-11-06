@@ -115,9 +115,9 @@ extension FoodSearch {
         List {
             resultsContents_legacy
         }
-        .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 66)
-        }
+//        .safeAreaInset(edge: .bottom) {
+//            Spacer().frame(height: 66)
+//        }
         .listStyle(.plain)
     }
 }

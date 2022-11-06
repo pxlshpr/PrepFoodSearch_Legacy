@@ -57,6 +57,7 @@ public struct FoodSearch: View {
             recentsList
         } else {
             resultsList
+                .edgesIgnoringSafeArea(.bottom)
         }
     }
     
@@ -64,9 +65,9 @@ public struct FoodSearch: View {
         List {
             emptySearchContents
         }
-        .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 90)
-        }
+//        .safeAreaInset(edge: .bottom) {
+//            Spacer().frame(height: 90)
+//        }
         .listStyle(.insetGrouped)
     }
     
@@ -78,6 +79,12 @@ public struct FoodSearch: View {
             } else if !searchManager.allMyFoods.isEmpty {
                 allMyFoodsSection
             }
+            createSection
+            createSection
+            createSection
+            createSection
+            createSection
+            createSection
             createSection
         }
     }
@@ -113,7 +120,7 @@ public struct FoodSearch: View {
             resultsContents
         }
         .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 90)
+            Spacer().frame(height: 0)
         }
         .listStyle(.sidebar)
     }
@@ -198,6 +205,8 @@ public struct FoodSearch: View {
             }
         }
     }
+    
+    @State var testing: String = ""
     
     var myFoodsSection: some View {
         Section("My Foods") {
@@ -285,6 +294,12 @@ public struct FoodSearchPreview: View {
         NavigationView {
             FoodSearch(searchManager: searchManager)
                 .onChange(of: searchManager.searchText, perform: searchTextChanged)
+//                .onAppear {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                        searchManager.searchText = "hello"
+//                        searchTextChanged(to: "hi")
+//                    }
+//                }
         }
     }
     
@@ -396,13 +411,4 @@ public struct FoodSearchPreview: View {
             Food(mockName: "Brinjal", emoji: "🍆"),
         ]
     }
-
-//    public init() { }
 }
-
-struct FoodSearch_Previews: PreviewProvider {
-    static var previews: some View {
-        FoodSearchPreview()
-    }
-}
-

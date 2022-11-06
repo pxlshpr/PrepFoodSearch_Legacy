@@ -39,6 +39,7 @@ extension FoodSearch {
             showingBarcodeScanner = true
         } label: {
             Image(systemName: "barcode.viewfinder")
+//            Image(systemName: "viewfinder.circle.fill")
                 .imageScale(.large)
         }
     }
