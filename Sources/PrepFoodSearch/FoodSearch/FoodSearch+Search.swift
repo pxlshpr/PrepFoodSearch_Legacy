@@ -108,11 +108,21 @@ public struct SearchableView<Content: View>: View {
         self.content = content
     }
 
+    var bottomInset: CGFloat {
+        if isFocused {
+            return 370
+        } else {
+            return searchText.isEmpty ? 0 : 100
+        }
+    }
     public var body: some View {
         ZStack {
             content()
                 .blur(radius: blurRadius)
                 .frame(width: UIScreen.main.bounds.width)
+                .safeAreaInset(edge: .bottom) {
+                    Spacer().frame(height: bottomInset)
+                }
                 .edgesIgnoringSafeArea(.bottom)
                 .interactiveDismissDisabled(isFocused)
             if !isHidden {
@@ -163,10 +173,18 @@ public struct SearchableView<Content: View>: View {
     @Namespace var namespace
     @State var buttonIsFocused = false
 
+    var shouldShowSearchBarBackground: Bool {
+        !searchText.isEmpty || buttonIsFocused
+    }
+    
+    var isExpanded: Bool {
+        buttonIsFocused || !searchText.isEmpty
+    }
+    
     /// Shrunken
     var searchBar: some View {
         ZStack {
-            if buttonIsFocused {
+            if isExpanded {
                 searchBarBackground
             }
             Button {
@@ -187,13 +205,13 @@ public struct SearchableView<Content: View>: View {
         HStack(spacing: 5) {
             searchIcon
             ZStack {
-                if buttonIsFocused {
+                if isExpanded {
                     HStack {
                         textField
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
 //                            .scaleEffect(buttonIsFocused ? 1 : 0.01)
-                            .opacity(buttonIsFocused ? 1 : 0.01)
+                            .opacity(isExpanded ? 1 : 0.01)
                         Spacer()
                         clearButton
                     }
@@ -201,34 +219,36 @@ public struct SearchableView<Content: View>: View {
                 HStack(spacing: 0) {
                     Text("Search")
                         .foregroundColor(Color(.label))
-                        .colorMultiply(buttonIsFocused ? Color(.tertiaryLabel) : Color(.secondaryLabel))
-                        .opacity(buttonIsFocused ? (searchText.isEmpty ? 1 : 0) : 1)
+                        .colorMultiply(isExpanded ? Color(.tertiaryLabel) : Color(.secondaryLabel))
+                        .opacity(isExpanded ? (searchText.isEmpty ? 1 : 0) : 1)
 //                        .padding(.trailing, buttonIsFocused ? 0 : 0)
                         .multilineTextAlignment(.leading)
                         .kerning(0.5)
-                    if buttonIsFocused {
+                    if isExpanded {
                         Text(" Foods")
                             .foregroundColor(Color(.tertiaryLabel))
-                            .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .trailing).combined(with: .opacity)))
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .move(edge: .leading)),
+                                removal: .move(edge: .trailing).combined(with: .opacity)))
                             .opacity(searchText.isEmpty ? 1 : 0)
                     }
                 }
-                .frame(maxWidth: buttonIsFocused ? .infinity : 61, alignment: .leading)
+                .frame(maxWidth: isExpanded ? .infinity : 61, alignment: .leading)
             }
         }
     }
         
     var textFieldBackground: some View {
-        RoundedRectangle(cornerRadius: buttonIsFocused ? 15 : 20, style: .circular)
-            .foregroundColor(buttonIsFocused ? textFieldColor : Color(.tertiarySystemGroupedBackground))
-            .frame(height: buttonIsFocused ? 48 : 38)
-            .frame(width: buttonIsFocused ? UIScreen.main.bounds.width - 18 : 120)
-            .offset(x: buttonIsFocused ? 0 : -20)
+        RoundedRectangle(cornerRadius: isExpanded ? 15 : 20, style: .circular)
+            .foregroundColor(isExpanded ? textFieldColor : Color(.tertiarySystemGroupedBackground))
+            .frame(height: isExpanded ? 48 : 38)
+            .frame(width: isExpanded ? UIScreen.main.bounds.width - 18 : 120)
+            .offset(x: isExpanded ? 0 : -20)
             .shadow(color: shadowColor, radius: 3, x: 0, y: 3)
     }
 
     var shadowColor: Color {
-        guard !buttonIsFocused else { return .clear }
+        guard !isExpanded else { return .clear }
         return Color(.black).opacity(colorScheme == .light ? 0.2 : 0.2)
     }
     
@@ -236,15 +256,15 @@ public struct SearchableView<Content: View>: View {
         ForEach(buttonViews.indices, id: \.self) { index in
             buttonViews[index]
                 .foregroundColor(Color(.label))
-                .colorMultiply(buttonIsFocused ? Color(.secondaryLabel) : Color(.secondaryLabel))
+                .colorMultiply(isExpanded ? Color(.secondaryLabel) : Color(.secondaryLabel))
                 .padding(6)
                 .background(
                     Circle()
-                        .foregroundColor(buttonIsFocused ? textFieldColor : Color(.tertiarySystemGroupedBackground))
+                        .foregroundColor(isExpanded ? textFieldColor : Color(.tertiarySystemGroupedBackground))
                         .shadow(color: shadowColor, radius: 3, x: 0, y: 3)
                 )
         }
-        .offset(x: buttonIsFocused ? 0 : 20)
+        .offset(x: isExpanded ? 0 : 20)
     }
     
     var searchBarContents: some View {

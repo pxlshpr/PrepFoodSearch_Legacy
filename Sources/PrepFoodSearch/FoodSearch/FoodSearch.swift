@@ -57,8 +57,17 @@ public struct FoodSearch: View {
             recentsList
         } else {
             resultsList
-                .edgesIgnoringSafeArea(.bottom)
         }
+    }
+
+    var resultsList: some View {
+        List {
+            resultsContents
+        }
+//        .safeAreaInset(edge: .bottom) {
+//            Spacer().frame(height: 0)
+//        }
+        .listStyle(.sidebar)
     }
     
     var recentsList: some View {
@@ -113,16 +122,6 @@ public struct FoodSearch: View {
                 }
             }
         }
-    }
-    
-    var resultsList: some View {
-        List {
-            resultsContents
-        }
-        .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 0)
-        }
-        .listStyle(.sidebar)
     }
     
     var allMyFoodsSection: some View {
