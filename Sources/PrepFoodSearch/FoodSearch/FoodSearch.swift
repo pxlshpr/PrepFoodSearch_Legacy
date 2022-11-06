@@ -12,7 +12,7 @@ public struct FoodSearch: View {
     
     public var body: some View {
         searchableView
-            .navigationTitle("Food Search")
+            .navigationTitle("Search Foods")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
             .sheet(isPresented: $showingFilters) { filtersSheet }
@@ -35,16 +35,3 @@ public struct FoodSearch: View {
     }
 }
 
-public struct FoodSearchPreview: View {
-    public var body: some View {
-        FoodSearch()
-    }
-    
-    public init() { }
-}
-
-struct FoodSearch_Previews: PreviewProvider {
-    static var previews: some View {
-        FoodSearchPreview()
-    }
-}
