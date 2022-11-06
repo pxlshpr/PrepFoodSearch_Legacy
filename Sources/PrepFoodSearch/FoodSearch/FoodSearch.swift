@@ -65,7 +65,7 @@ public struct FoodSearch: View {
             emptySearchContents
         }
         .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 66)
+            Spacer().frame(height: 90)
         }
         .listStyle(.insetGrouped)
     }
@@ -113,7 +113,7 @@ public struct FoodSearch: View {
             resultsContents
         }
         .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 66)
+            Spacer().frame(height: 90)
         }
         .listStyle(.sidebar)
     }
