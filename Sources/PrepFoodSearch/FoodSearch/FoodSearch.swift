@@ -2,8 +2,11 @@ import SwiftUI
 import PrepDataTypes
 import SwiftHaptics
 import SwiftUISugar
+import ActivityIndicatorView
+import Camera
 
 public struct FoodSearch: View {
+    
     @Environment(\.dismiss) var dismiss
     @ObservedObject var searchManager: SearchManager
     @State var showingBarcodeScanner = false
@@ -21,106 +24,140 @@ public struct FoodSearch: View {
     
     public var body: some View {
         searchableView
-//            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { trailingContent }
             .toolbar { principalContent }
             .toolbar { leadingToolbar }
             .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
             .sheet(isPresented: $showingFilters) { filtersSheet }
-            .onChange(of: isComparing) { newValue in
-                searchIsFocused = false
-            }
-            .interactiveDismissDisabled(searchIsFocused)
+            .onChange(of: isComparing, perform: isComparingChanged)
+//            .interactiveDismissDisabled(searchIsFocused)
     }
     
-    var leadingToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .navigationBarLeading) {
-            Button {
-                Haptics.feedback(style: .soft)
-                dismiss()
-            } label: {
-                closeButtonLabel
-            }
+    @ViewBuilder
+    var list: some View {
+        if searchManager.searchText.isEmpty {
+            recentsList
+        } else {
+            resultsList
         }
     }
     
-    var title: String {
-        return isComparing ? "Select Foods to Compare" : "Search"
+    var recentsList: some View {
+        List {
+            emptySearchContents
+        }
+        .safeAreaInset(edge: .bottom) {
+            Spacer().frame(height: 66)
+        }
+        .listStyle(.insetGrouped)
     }
     
-    var principalContent: some ToolbarContent {
-        ToolbarItemGroup(placement: .principal) {
-            Group {
-                if isComparing {
-                    Text(title)
-                        .font(.headline)
-                } else {
-                    Picker(selection: $foodType) {
-                        Label("Foods", systemImage: "carrot").tag("Foods")
-                            .labelStyle(.titleAndIcon)
-                        Label("Recipes", systemImage: "note.text").tag("Recipes")
-                            .labelStyle(.titleAndIcon)
-                        Label("Plates", systemImage: "fork.knife").tag("Plates")
-                            .labelStyle(.titleAndIcon)
-                    } label: {
-                        Text("Hello")
-                            .background(Color.green)
-                    }
-                    .pickerStyle(.menu)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .contentShape(Rectangle())
-                    .simultaneousGesture(TapGesture().onEnded {
-                        Haptics.feedback(style: .soft)
-                    })
-                }
-            }
+    @ViewBuilder
+    var emptySearchContents: some View {
+        if !searchManager.recents.isEmpty {
+            recentsSection
+        } else if !searchManager.allMyFoods.isEmpty {
+            allMyFoodsSection
+        } else {
+            noDeviceFoodsSection
         }
     }
     
-    @State var foodType: String = "Foods"
-    var trailingContent: some ToolbarContent {
-        ToolbarItemGroup(placement: .navigationBarTrailing) {
-            Button {
-                Haptics.feedback(style: .medium)
-                if searchIsFocused {
-                    searchIsFocused = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        withAnimation {
-                            isComparing.toggle()
-                        }
-                    }
-                } else {
-                    withAnimation {
-                        isComparing.toggle()
-                    }
-                }
-            } label: {
-                Label("Compare", systemImage: "rectangle.portrait.on.rectangle.portrait.angled\(isComparing ? ".fill" : "")")
-            }
-        }
+    var noDeviceFoodsSection: some View {
+        noDeviceFoodsCell
     }
-    
-    var searchableView: some View {
-        SearchableView(
-            searchText: $searchManager.searchText,
-            prompt: "Search Foods",
-            focused: $searchIsFocused,
-            focusOnAppear: false,
-            isHidden: $isComparing,
-            didSubmit: didSubmit,
-            buttonViews: {
-                filterButton
-                scanButton
-            },
-            content: {
-                list
-            })
-    }
-}
 
-struct FoodSearch_Previews: PreviewProvider {
-    static var previews: some View {
-        FoodSearchPreview()
+    var noDeviceFoodsCell: some View {
+        var createHeader: some View {
+            Text("Create a Food")
+//            Label("Create a Food", systemImage: "plus")
+        }
+        return Group {
+            Section {
+                Text("Search over 1 million foods in our database.")
+                .foregroundColor(.secondary)
+                .listRowSeparator(.hidden)
+            }
+            Section(header: createHeader) {
+                Button {
+                    
+                } label: {
+                    Label("Start with an Empty Food", systemImage: "square.and.pencil")
+                }
+                Button {
+                    
+                } label: {
+                    Label("Scan a Food Label or Screenshot", systemImage: "text.viewfinder")
+                }
+                Button {
+                    
+                } label: {
+                    Label("Import a Food from MyFitnessPal", systemImage: "square.and.arrow.down")
+                }
+            }
+        }
     }
+    
+    var resultsList: some View {
+        List {
+            resultsContents
+        }
+        .safeAreaInset(edge: .bottom) {
+            Spacer().frame(height: 66)
+        }
+        .listStyle(.sidebar)
+    }
+    
+    var allMyFoodsSection: some View {
+        var header: some View {
+            HStack {
+                Text("My Foods")
+            }
+        }
+        
+        return Section(header: header) {
+            Text("All my foods go here")
+        }
+    }
+    
+    var recentsSection: some View {
+        var header: some View {
+            HStack {
+                Image(systemName: "clock")
+                Text("Recents")
+            }
+        }
+        
+        return Section(header: header) {
+            Text("Recents")
+        }
+    }
+    
+    var resultsContents: some View {
+        myFoodsSection
+    }
+    
+    var myFoodsSection: some View {
+        Section("My Foods") {
+            loadingCell
+        }
+    }
+    
+    var verifiedHeader: some View {
+        HStack {
+            Image(systemName: "checkmark.seal.fill")
+                .foregroundColor(.green)
+            Text("Verified Foods")
+        }
+    }
+
+    var publicDatasetsHeader: some View {
+        HStack {
+            Image(systemName: "text.book.closed.fill")
+                .foregroundColor(.secondary)
+            Text("Public Datasets")
+        }
+    }
+
 }

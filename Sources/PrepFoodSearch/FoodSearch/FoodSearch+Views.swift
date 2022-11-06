@@ -1,40 +1,38 @@
-
 import SwiftUI
 import SwiftHaptics
 import ActivityIndicatorView
 import Camera
+import PrepDataTypes
+import SwiftUISugar
 
 extension FoodSearch {
-
-    var resultsContents: some View {
-        Group {
-            ForEach(searchManager.results) { result in
-                Button {
-                    Haptics.feedback(style: .soft)
-                    searchIsFocused = false
-                } label: {
-                    FoodCell(result: result)
-                        .buttonStyle(.borderless)
-                }
-                .onAppear {
-                    searchManager.loadMoreContentIfNeeded(currentResult: result)
-                }
-            }
-            if searchManager.isLoadingPage {
-                HStack {
-                    Spacer()
-                    ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .listRowSeparator(.hidden)
-//                ProgressView()
-            }
+    
+    //MARK: - Cells
+   
+    var loadingCell: some View {
+        HStack {
+            ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
+                .frame(width: 27, height: 27)
+                .foregroundColor(.secondary)
+                .offset(y: -2)
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
     
-    //MARK: Buttons
+    var loadMoreCell: some View {
+        Button {
+            Haptics.feedback(style: .rigid)
+            searchingVerified = true
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.system(size: 30))
+                .frame(maxWidth: .infinity, alignment: .center)
+                .foregroundColor(.accentColor)
+        }
+//        .buttonStyle(.borderless)
+    }
+    
+    //MARK: - Buttons
     var scanButton: some View {
         Button {
             searchIsFocused = false
@@ -65,123 +63,68 @@ extension FoodSearch {
             if let barcode = barcodes.first {
                 searchManager.searchText = barcode.string
             }
-//            Task {
-//                let food = try await searchManager.search(for: barcodes)
-//                await MainActor.run {
-//                    self.foodToPresent = food
-//                }
-//            }
         }
     }
     
-    var list_legacy: some View {
-        List {
-            resultsContents
+    //MARK: - Toolbars
+    
+    var leadingToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarLeading) {
+            Button {
+                Haptics.feedback(style: .soft)
+                dismiss()
+            } label: {
+                closeButtonLabel
+            }
         }
-        .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 66)
-        }
-        .listStyle(.plain)
     }
-        
-    var list: some View {
-        List {
-            Section(header: myFoodsHeader) {
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-            }
-            Section(header: verifiedHeader) {
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                Group {
-                    if !isComparing {
-                        if searchingVerified {
-                            HStack {
-                                ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-                                    .frame(width: 27, height: 27)
-                                    .foregroundColor(.secondary)
-                                    .offset(y: -2)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            Button {
-                                Haptics.feedback(style: .rigid)
-                                searchingVerified = true
-                            } label: {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 30))
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
-                            .buttonStyle(.borderless)
+
+    var principalContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .principal) {
+            Group {
+                if isComparing {
+                    Text(title)
+                        .font(.headline)
+                } else {
+                    Picker("", selection: $searchManager.foodType) {
+                        ForEach(FoodType.allCases, id: \.self) {
+                            Label("\($0.description)s", systemImage: $0.systemImage).tag($0)
+                                .labelStyle(.titleAndIcon)
                         }
                     }
-                }
-            }
-            Section(header: publicDatasetsHeader) {
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                Group {
-                    if !isComparing {
-                        if searchingDatasets {
-                            HStack {
-                                ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-                                    .frame(width: 27, height: 27)
-                                    .foregroundColor(.secondary)
-                                    .offset(y: -2)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            Button {
-                                Haptics.feedback(style: .rigid)
-                                searchingDatasets = true
-                            } label: {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 30))
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
-                            .buttonStyle(.borderless)
-                        }
-                    }
+                    .pickerStyle(.menu)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .contentShape(Rectangle())
+                    .simultaneousGesture(TapGesture().onEnded {
+                        Haptics.feedback(style: .soft)
+                    })
                 }
             }
         }
-        .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 66)
-        }
-        .listStyle(.sidebar)
     }
     
-    var myFoodsHeader: some View {
-        HStack {
-//            Image(systemName: "person.fill")
-//                .foregroundColor(.secondary)
-            Text("My Foods")
+    var trailingContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarTrailing) {
+            Button {
+                Haptics.feedback(style: .medium)
+                if searchIsFocused {
+                    searchIsFocused = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        withAnimation {
+                            isComparing.toggle()
+                        }
+                    }
+                } else {
+                    withAnimation {
+                        isComparing.toggle()
+                    }
+                }
+            } label: {
+                Label("Compare", systemImage: "rectangle.portrait.on.rectangle.portrait.angled\(isComparing ? ".fill" : "")")
+            }
         }
     }
-
-    var verifiedHeader: some View {
-        HStack {
-            Image(systemName: "checkmark.seal.fill")
-                .foregroundColor(.green)
-            Text("Verified Foods")
-        }
-    }
-
-    var publicDatasetsHeader: some View {
-        HStack {
-            Image(systemName: "text.book.closed.fill")
-                .foregroundColor(.secondary)
-            Text("Public Datasets")
-        }
-    }
-
 }
-
 
 import SwiftUI
 import PrepViews
