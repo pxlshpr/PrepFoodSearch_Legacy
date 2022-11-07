@@ -169,25 +169,25 @@ public struct FoodSearch: View {
         
         return Section(header: header) {
             ForEach(searchViewModel.recents, id: \.self) { food in
-                Button {
-                    didTapFood(food)
-                } label: {
-                    foodCell(for: food)
-                }
+                foodButton(for: food)
             }
         }
     }
     
-    func foodCell(for food: Food) -> some View {
-        FoodCell(
-            food: food,
-            isSelectable: $isComparing,
-            didTapMacrosIndicator: {
-                didTapMacrosIndicatorForFood(food)
-            },
-            didToggleSelection: { _ in
-            }
-        )
+    func foodButton(for food: Food) -> some View {
+        Button {
+            didTapFood(food)
+        } label: {
+            FoodCell(
+                food: food,
+                isSelectable: $isComparing,
+                didTapMacrosIndicator: {
+                    didTapMacrosIndicatorForFood(food)
+                },
+                didToggleSelection: { _ in
+                }
+            )
+        }
     }
     
     var resultsContents: some View {
@@ -233,7 +233,7 @@ public struct FoodSearch: View {
                         }
                     } else {
                         ForEach(foods, id: \.self) {
-                            foodCell(for: $0)
+                            foodButton(for: $0)
                         }
                         if results.isLoading {
                             loadingCell
