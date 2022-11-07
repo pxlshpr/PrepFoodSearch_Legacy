@@ -2,11 +2,6 @@ import SwiftUI
 import PrepDataTypes
 import SwiftSugar
 
-public protocol SearchDataProvider {
-    var recentFoods: [Food] { get }
-    func getFoods(scope: SearchScope, searchText: String, page: Int) async throws -> [Food]
-}
-
 public class SearchManager: ObservableObject {
 
     var searchViewModel: SearchViewModel
