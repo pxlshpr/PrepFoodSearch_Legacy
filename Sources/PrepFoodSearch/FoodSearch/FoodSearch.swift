@@ -5,11 +5,15 @@ import SwiftUISugar
 import ActivityIndicatorView
 import Camera
 import SwiftSugar
+import PrepViews
 
 public struct FoodSearch: View {
     
     @Environment(\.dismiss) var dismiss
+    
+    @ObservedObject var searchViewModel: SearchViewModel
     @ObservedObject var searchManager: SearchManager
+
     @State var showingBarcodeScanner = false
     @State var searchIsFocused = false
     @State var showingFilters = false
@@ -21,7 +25,8 @@ public struct FoodSearch: View {
     
     @State var hasAppeared = false
     
-    public init(searchManager: SearchManager) {
+    public init(searchViewModel: SearchViewModel, searchManager: SearchManager) {
+        self.searchViewModel = searchViewModel
         self.searchManager = searchManager
     }
     
@@ -49,11 +54,18 @@ public struct FoodSearch: View {
         .toolbar { trailingContent }
         .toolbar { principalContent }
         .toolbar { leadingToolbar }
+        .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
     }
     
+    func searchTextChanged(to searchText: String) {
+        Task {
+            await searchManager.performBackendSearch()
+        }
+    }
+
     @ViewBuilder
     var list: some View {
-        if searchManager.searchText.isEmpty {
+        if searchViewModel.searchText.isEmpty {
             recentsList
         } else {
             resultsList
@@ -83,9 +95,9 @@ public struct FoodSearch: View {
     @ViewBuilder
     var emptySearchContents: some View {
         Group {
-            if !searchManager.recents.isEmpty {
+            if !searchViewModel.recents.isEmpty {
                 recentsSection
-            } else if !searchManager.allMyFoods.isEmpty {
+            } else if !searchViewModel.allMyFoods.isEmpty {
                 allMyFoodsSection
             }
             createSection
@@ -139,89 +151,67 @@ public struct FoodSearch: View {
         }
         
         return Section(header: header) {
-            ForEach(searchManager.recents, id: \.self) {
-                FoodCell(food: $0, isComparing: $isComparing)
+            ForEach(searchViewModel.recents, id: \.self) { food in
+                FoodCell(food: food, isSelectable: $isComparing) { isSelected in
+                    print("isSelected for: \(food.name) changed to \(isSelected)")
+                }
             }
         }
     }
     
     var resultsContents: some View {
         Group {
-            myFoodsSection
-            verifiedFoodsSection
-            datasetFoodsSection
+            foodsSection(for: .backend)
+            foodsSection(for: .verified)
+            foodsSection(for: .datasets)
         }
     }
     
-    var verifiedFoodsSection: some View {
-        Section(header: verifiedHeader) {
-            if searchManager.verifiedResults.foods.isEmpty {
-                if searchManager.verifiedResults.isLoading {
-                    loadingCell
-                } else {
-                    Text("No results")
-                }
-            } else {
-                ForEach(searchManager.verifiedResults.foods, id: \.self) {
-                    FoodCell(food: $0, isComparing: $isComparing)
-                }
-                if searchManager.verifiedResults.isLoading {
-                    loadingCell
-                } else {
-                    loadMoreCell {
-                        searchManager.verifiedResults.isLoading = true
+    @ViewBuilder
+    func header(for scope: SearchScope) -> some View {
+        switch scope {
+        case .backend:
+            Text("My Foods")
+        case .verified:
+            verifiedHeader
+        case .datasets:
+            publicDatasetsHeader
+        }
+    }
+    
+    func foodsSection(for scope: SearchScope) -> some View {
+        let results = searchViewModel.results(for: scope)
+        return Group {
+            if let foods = results.foods {
+                Section(header: header(for: scope)) {
+                    if foods.isEmpty {
+                        if results.isLoading {
+                            loadingCell
+                        } else {
+                            noResultsCell
+                        }
+                    } else {
+                        ForEach(foods, id: \.self) {
+                            FoodCell(food: $0, isSelectable: $isComparing) { isSelected in
+                                
+                            }
+                        }
+                        if results.isLoading {
+                            loadingCell
+                        } else {
+                            loadMoreCell {
+                                searchViewModel.loadMoreResults(for: scope)
+                            }
+                        }
                     }
                 }
             }
         }
     }
     
-    var datasetFoodsSection: some View {
-        Section(header: publicDatasetsHeader) {
-            if searchManager.datasetResults.foods.isEmpty {
-                if searchManager.datasetResults.isLoading {
-                    loadingCell
-                } else {
-                    Text("No results")
-                }
-            } else {
-                ForEach(searchManager.datasetResults.foods, id: \.self) {
-                    FoodCell(food: $0, isComparing: $isComparing)
-                }
-                if searchManager.datasetResults.isLoading {
-                    loadingCell
-                } else {
-                    loadMoreCell {
-                        searchManager.datasetResults.isLoading = true
-                    }
-                }
-            }
-        }
-    }
-    
-    @State var testing: String = ""
-    
-    var myFoodsSection: some View {
-        Section("My Foods") {
-            if searchManager.myFoodResults.foods.isEmpty {
-                if searchManager.myFoodResults.isLoading {
-                    loadingCell
-                } else {
-                    Text("No results")
-                }
-            } else {
-                ForEach(searchManager.myFoodResults.foods, id: \.self) {
-                    FoodCell(food: $0, isComparing: $isComparing)
-                }
-                if searchManager.myFoodResults.isLoading {
-                    loadingCell
-                } else {
-                    loadMoreCell {
-                        searchManager.myFoodResults.isLoading = true
-                    }
-                }
-            }
-        }
+    var noResultsCell: some View {
+        Text("No results")
+            .foregroundColor(Color(.tertiaryLabel))
     }
     
     var verifiedHeader: some View {
@@ -238,170 +228,5 @@ public struct FoodSearch: View {
                 .foregroundColor(.secondary)
             Text("Public Datasets")
         }
-    }
-}
-
-extension FoodCell {
-    init(food: Food, isComparing: Binding<Bool>) {
-        self.init(
-            isComparing: isComparing,
-            emoji: food.emoji,
-            name: food.name,
-            detail: food.detail,
-            brand: food.brand,
-            carb: food.info.nutrients.carb,
-            fat: food.info.nutrients.fat,
-            protein: food.info.nutrients.protein
-        )
-    }
-}
-
-enum SearchError: Error {
-    
-}
-
-enum SearchStep {
-    case backend
-    case verified
-    case datasets
-}
-
-public struct FoodSearchPreview: View {
-    
-    @StateObject var searchManager: SearchManager
-    
-    public init() {
-        let foods = [
-            Food(mockName: "Cheese", emoji: "🧀"),
-            Food(mockName: "KFC Leg", emoji: "🍗"),
-            Food(mockName: "Carrot", emoji: "🥕"),
-            Food(mockName: "Beans", emoji: "🫘"),
-            Food(mockName: "Brinjal", emoji: "🍆"),
-        ]
-        
-        let searchManager = SearchManager(recents: foods)
-        _searchManager = StateObject(wrappedValue: searchManager)
-    }
-    
-    public var body: some View {
-        NavigationView {
-            FoodSearch(searchManager: searchManager)
-                .onChange(of: searchManager.searchText, perform: searchTextChanged)
-//                .onAppear {
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                        searchManager.searchText = "hello"
-//                        searchTextChanged(to: "hi")
-//                    }
-//                }
-        }
-    }
-    
-    func searchTextChanged(to searchText: String) {
-        guard !searchText.isEmpty else { return }
-        
-        Task {
-            return try await withThrowingTaskGroup(of: Result<SearchStep, SearchError>.self) { group in
-                
-                group.addTask {
-                    try await searchBackend(with: searchText)
-                    return .success(.backend)
-                }
-
-                group.addTask {
-                    try await searchVerifiedFoods(with: searchText)
-                    return .success(.verified)
-                }
-
-                group.addTask {
-                    try await searchDatasetFoods(with: searchText)
-                    return .success(.datasets)
-                }
-
-                let start = CFAbsoluteTimeGetCurrent()
-
-                for try await result in group {
-                    switch result {
-                    case .success(let step):
-                        print("💾 Save Step: \(step) completed in \(CFAbsoluteTimeGetCurrent()-start)s")
-                    case .failure(let error):
-                        throw error
-                    }
-                }
-
-                print("✅ Search completed in \(CFAbsoluteTimeGetCurrent()-start)s")
-            }
-        }
-    }
-    
-    func searchBackend(with searchText: String) async throws {
-        searchManager.myFoodResults.isLoading = true
-        Task {
-            let foods = try await getMyFoodsFromBackend(searchText: searchText)
-            await MainActor.run {
-                withAnimation {
-                    searchManager.myFoodResults.foods = foods
-                    searchManager.myFoodResults.isLoading = false
-                }
-            }
-        }
-    }
-
-    func searchVerifiedFoods(with searchText: String) async throws {
-        searchManager.verifiedResults.isLoading = true
-        Task {
-            let foods = try await getVerifiedFoodsFromBackend(searchText: searchText)
-            await MainActor.run {
-                withAnimation {
-                    searchManager.verifiedResults.foods = foods
-                    searchManager.verifiedResults.isLoading = false
-                }
-            }
-        }
-    }
-
-    func searchDatasetFoods(with searchText: String) async throws {
-        searchManager.datasetResults.isLoading = true
-        Task {
-            let foods = try await getDatasetFoodsFromBackend(searchText: searchText)
-            await MainActor.run {
-                withAnimation {
-                    searchManager.datasetResults.foods = foods
-                    searchManager.datasetResults.isLoading = false
-                }
-            }
-        }
-    }
-
-    func getMyFoodsFromBackend(searchText: String) async throws -> [Food] {
-        try await sleepTask(Double.random(in: 0.2...2.5))
-        return [
-            Food(mockName: "Cheese", emoji: "🧀"),
-            Food(mockName: "KFC Leg", emoji: "🍗"),
-            Food(mockName: "Carrot", emoji: "🥕"),
-            Food(mockName: "Beans", emoji: "🫘"),
-            Food(mockName: "Brinjal", emoji: "🍆"),
-        ]
-    }
-
-    func getVerifiedFoodsFromBackend(searchText: String) async throws -> [Food] {
-        try await sleepTask(Double.random(in: 0.2...2.5))
-        return [
-            Food(mockName: "Cheese", emoji: "🧀"),
-            Food(mockName: "KFC Leg", emoji: "🍗"),
-            Food(mockName: "Carrot", emoji: "🥕"),
-            Food(mockName: "Beans", emoji: "🫘"),
-            Food(mockName: "Brinjal", emoji: "🍆"),
-        ]
-    }
-
-    func getDatasetFoodsFromBackend(searchText: String) async throws -> [Food] {
-        try await sleepTask(Double.random(in: 0.2...2.5))
-        return [
-            Food(mockName: "Cheese", emoji: "🧀"),
-            Food(mockName: "KFC Leg", emoji: "🍗"),
-            Food(mockName: "Carrot", emoji: "🥕"),
-            Food(mockName: "Beans", emoji: "🫘"),
-            Food(mockName: "Brinjal", emoji: "🍆"),
-        ]
     }
 }

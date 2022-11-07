@@ -1,7 +1,7 @@
 import SwiftUI
 import PrepDataTypes
 
-extension SearchManager {
+extension SearchViewModel {
     
     func search() {
         results = []

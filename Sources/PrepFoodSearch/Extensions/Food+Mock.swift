@@ -1,7 +1,7 @@
 import Foundation
 import PrepDataTypes
 
-extension Food {
+public extension Food {
     init(mockName name: String, emoji: String, detail: String? = nil, brand: String? = nil) {
         let energy = Double.random(in: 30...500)
         let carb = Double.random(in: 0...100)

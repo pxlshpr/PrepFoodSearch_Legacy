@@ -2,6 +2,7 @@ import SwiftUI
 import ActivityIndicatorView
 import SwiftHaptics
 import PrepDataTypes
+import PrepViews
 
 enum ResultGroupType {
     case myFoods
@@ -15,77 +16,10 @@ struct ResultGroup {
 }
 
 extension FoodSearch {
-    var listContents_legacy: some View {
-        Group {
-            Section("My Foods") {
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-            }
-            Section(header: verifiedHeader) {
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                Group {
-                    if !isComparing {
-                        if searchingVerified {
-                            HStack {
-                                ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-                                    .frame(width: 27, height: 27)
-                                    .foregroundColor(.secondary)
-                                    .offset(y: -2)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            Button {
-                                Haptics.feedback(style: .rigid)
-                                searchingVerified = true
-                            } label: {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 30))
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
-                            .buttonStyle(.borderless)
-                        }
-                    }
-                }
-            }
-            Section(header: publicDatasetsHeader) {
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                FoodCell(isComparing: $isComparing, emoji: "🧀", name: "Cheese", carb: 5, fat: 2, protein: 1)
-                Group {
-                    if !isComparing {
-                        if searchingDatasets {
-                            HStack {
-                                ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())
-                                    .frame(width: 27, height: 27)
-                                    .foregroundColor(.secondary)
-                                    .offset(y: -2)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            Button {
-                                Haptics.feedback(style: .rigid)
-                                searchingDatasets = true
-                            } label: {
-                                Image(systemName: "ellipsis")
-                                    .font(.system(size: 30))
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
-                            .buttonStyle(.borderless)
-                        }
-                    }
-                }
-            }
-        }
-    }
     
     var resultsContents_legacy: some View {
         Group {
-            ForEach(searchManager.results) { result in
+            ForEach(searchViewModel.results) { result in
                 Button {
                     Haptics.feedback(style: .soft)
                     searchIsFocused = false
@@ -94,10 +28,10 @@ extension FoodSearch {
                         .buttonStyle(.borderless)
                 }
                 .onAppear {
-                    searchManager.loadMoreContentIfNeeded(currentResult: result)
+                    searchViewModel.loadMoreContentIfNeeded(currentResult: result)
                 }
             }
-            if searchManager.isLoadingPage {
+            if searchViewModel.isLoadingPage {
                 HStack {
                     Spacer()
                     ActivityIndicatorView(isVisible: .constant(true), type: .opacityDots())

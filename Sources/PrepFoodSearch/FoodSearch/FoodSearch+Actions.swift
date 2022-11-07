@@ -3,7 +3,10 @@ import Foundation
 extension FoodSearch {
 
     func didSubmit() {
-        searchManager.search()
+//        searchManager.search()
+        Task {
+            await searchManager.performNetworkSearch()
+        }
     }
 
     func isComparingChanged(to newValue: Bool) {

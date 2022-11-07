@@ -7,7 +7,6 @@ import PrepViews
 extension FoodCell {
     init(result: FoodSearchResult) {
         self.init(
-            isComparing: .constant(false), 
             emoji: result.emoji,
             name: result.name,
             detail: result.detail,
