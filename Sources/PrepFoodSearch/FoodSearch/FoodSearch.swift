@@ -205,7 +205,7 @@ public struct FoodSearch: View {
                         }
                         if results.isLoading {
                             loadingCell
-                        } else {
+                        } else if results.canLoadMorePages {
                             loadMoreCell {
                                 searchViewModel.loadMoreResults(for: scope)
                             }
