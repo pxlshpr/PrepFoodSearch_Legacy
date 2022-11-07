@@ -1,9 +1,11 @@
-import Foundation
+import SwiftUI
 
 extension FoodSearch {
 
     func didSubmit() {
-//        searchManager.search()
+        withAnimation {
+            shouldShowSearchPrompt = false
+        }
         Task {
             await searchManager.performNetworkSearch()
         }
