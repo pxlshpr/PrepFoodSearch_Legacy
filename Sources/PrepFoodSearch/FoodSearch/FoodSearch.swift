@@ -180,7 +180,7 @@ public struct FoodSearch: View {
             /// This has something to do with triggering the navigation push from a list element.
             if searchIsFocused {
                 searchIsFocused = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                     didTapFood(food)
                 }
             } else {
