@@ -179,9 +179,9 @@ public struct FoodSearch: View {
             /// This is crucial to avoid having the search elements floating on top when we come back this view.
             /// This has something to do with triggering the navigation push from a list element.
             if searchIsFocused {
-                didTapFood(food)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    searchIsFocused = false
+                searchIsFocused = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    didTapFood(food)
                 }
             } else {
                 didTapFood(food)
