@@ -79,7 +79,6 @@ public class SearchManager: ObservableObject {
 
     func search(scope: SearchScope, with searchText: String) async throws {
         
-        
         await MainActor.run {
             withAnimation {
                 searchViewModel.setScopeAsLoading(scope)

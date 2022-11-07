@@ -32,8 +32,13 @@ public class SearchViewModel: ObservableObject {
     public func setScopeAsLoading(_ scope: SearchScope) {
         switch scope {
         case .backend:
-            myFoodResults.isLoading = true
-            myFoodResults.foods = []
+            /// Don't show loading indicator if we're searching the backend while we already have results
+            /// (since this mostly happens during text entry, and we wouldn't want to constantly keep
+            /// swapping the view)
+            if myFoodResults.foods == nil {
+                myFoodResults.foods = []
+                myFoodResults.isLoading = true
+            }
         case .verified:
             verifiedResults.isLoading = true
             verifiedResults.foods = []
