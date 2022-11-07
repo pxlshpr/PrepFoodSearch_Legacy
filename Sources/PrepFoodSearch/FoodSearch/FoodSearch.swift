@@ -176,6 +176,9 @@ public struct FoodSearch: View {
     
     func foodButton(for food: Food) -> some View {
         Button {
+            /// This is crucial to avoid having the search elements floating on top when we come back this view.
+            /// This has something to do with triggering the navigation push from a list element.
+            searchIsFocused = false
             didTapFood(food)
         } label: {
             FoodCell(
