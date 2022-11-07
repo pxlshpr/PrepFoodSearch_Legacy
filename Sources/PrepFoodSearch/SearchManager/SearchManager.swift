@@ -18,7 +18,9 @@ public class SearchManager: ObservableObject {
 
     func performBackendSearch() async {
         guard !searchViewModel.searchText.isEmpty else {
-            searchViewModel.clearBackendSearch()
+            await MainActor.run {
+                searchViewModel.clearBackendSearch()
+            }
             return
         }
         
