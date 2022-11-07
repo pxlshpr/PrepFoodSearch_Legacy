@@ -90,16 +90,24 @@ public class SearchViewModel: ObservableObject {
         }
     }
     
-    func clearBackendSearch() {
-        myFoodResults.foods = []
-        myFoodResults.currentPage = 1
-        myFoodResults.canLoadMorePages = true
-        myFoodResults.isLoading = false
+    func clearSearch() {
+        myFoodResults.clear()
+        verifiedResults.clear()
+        datasetResults.clear()
     }
     
     /// We determine this by examining the `FoodSearcResults` for both verified and datasets, and if they are both nil,
     /// we can conclude that the user hasn't submitted search yet (as they begin as nil and then get assigned empty arrays at least)
     var hasNotSubmittedSearchYet: Bool {
         verifiedResults.foods == nil && datasetResults.foods == nil
+    }
+}
+
+extension FoodSearchResults {
+    mutating func clear() {
+        foods = []
+        currentPage = 1
+        canLoadMorePages = true
+        isLoading = false
     }
 }
