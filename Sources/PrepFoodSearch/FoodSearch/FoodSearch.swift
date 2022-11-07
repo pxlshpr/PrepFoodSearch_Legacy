@@ -27,7 +27,14 @@ public struct FoodSearch: View {
     @State var shouldShowRecents: Bool = true
     @State var shouldShowSearchPrompt: Bool = false
     
-    public init(dataProvider: SearchDataProvider) {
+    let didTapFood: (Food) -> ()
+    let didTapMacrosIndicatorForFood: (Food) -> ()
+    
+    public init(
+        dataProvider: SearchDataProvider,
+        didTapFood: @escaping ((Food) -> ()),
+        didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
+    ) {
         
         let searchViewModel = SearchViewModel(recents: dataProvider.recentFoods)
         _searchViewModel = StateObject(wrappedValue: searchViewModel)
@@ -37,6 +44,9 @@ public struct FoodSearch: View {
             dataProvider: dataProvider
         )
         _searchManager = StateObject(wrappedValue: searchManager)
+        
+        self.didTapFood = didTapFood
+        self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
     }
     
     @ViewBuilder
@@ -158,11 +168,25 @@ public struct FoodSearch: View {
         
         return Section(header: header) {
             ForEach(searchViewModel.recents, id: \.self) { food in
-                FoodCell(food: food, isSelectable: $isComparing) { isSelected in
-                    print("isSelected for: \(food.name) changed to \(isSelected)")
+                Button {
+                    didTapFood(food)
+                } label: {
+                    foodCell(for: food)
                 }
             }
         }
+    }
+    
+    func foodCell(for food: Food) -> some View {
+        FoodCell(
+            food: food,
+            isSelectable: $isComparing,
+            didTapMacrosIndicator: {
+                didTapMacrosIndicatorForFood(food)
+            },
+            didToggleSelection: { _ in
+            }
+        )
     }
     
     var resultsContents: some View {
@@ -208,9 +232,7 @@ public struct FoodSearch: View {
                         }
                     } else {
                         ForEach(foods, id: \.self) {
-                            FoodCell(food: $0, isSelectable: $isComparing) { isSelected in
-                                
-                            }
+                            foodCell(for: $0)
                         }
                         if results.isLoading {
                             loadingCell
