@@ -11,8 +11,8 @@ public struct FoodSearch: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @ObservedObject var searchViewModel: SearchViewModel
-    @ObservedObject var searchManager: SearchManager
+    @StateObject var searchViewModel: SearchViewModel
+    @StateObject var searchManager: SearchManager
 
     @State var showingBarcodeScanner = false
     @State var searchIsFocused = false
@@ -25,9 +25,16 @@ public struct FoodSearch: View {
     
     @State var hasAppeared = false
     
-    public init(searchViewModel: SearchViewModel, searchManager: SearchManager) {
-        self.searchViewModel = searchViewModel
-        self.searchManager = searchManager
+    public init(dataProvider: SearchDataProvider) {
+        
+        let searchViewModel = SearchViewModel(recents: dataProvider.recentFoods)
+        _searchViewModel = StateObject(wrappedValue: searchViewModel)
+        
+        let searchManager = SearchManager(
+            searchViewModel: searchViewModel,
+            dataProvider: dataProvider
+        )
+        _searchManager = StateObject(wrappedValue: searchManager)
     }
     
     @ViewBuilder
