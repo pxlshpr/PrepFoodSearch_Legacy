@@ -91,9 +91,12 @@ public class SearchViewModel: ObservableObject {
     }
     
     func clearSearch() {
-        myFoodResults.clear()
         verifiedResults.clear()
         datasetResults.clear()
+        
+        myFoodResults.clear()
+        myFoodResults.foods = []
+        myFoodResults.isLoading = true
     }
     
     /// We determine this by examining the `FoodSearcResults` for both verified and datasets, and if they are both nil,
@@ -105,7 +108,7 @@ public class SearchViewModel: ObservableObject {
 
 extension FoodSearchResults {
     mutating func clear() {
-        foods = []
+        foods = nil
         currentPage = 1
         canLoadMorePages = true
         isLoading = false
