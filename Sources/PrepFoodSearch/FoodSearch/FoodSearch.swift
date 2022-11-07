@@ -69,7 +69,8 @@ public struct FoodSearch: View {
             }
         }
         .transition(.opacity)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Search")
+        .navigationBarTitleDisplayMode(.large)
         .toolbar { trailingContent }
         .toolbar { principalContent }
         .toolbar { leadingToolbar }
