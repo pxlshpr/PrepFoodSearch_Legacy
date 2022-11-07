@@ -48,17 +48,20 @@ public class SearchViewModel: ObservableObject {
         }
     }
     
-    public func completeScope(_ scope: SearchScope, with foods: [Food]) {
+    public func completeScope(_ scope: SearchScope, with foods: [Food], haveMoreResults: Bool) {
         switch scope {
         case .backend:
             myFoodResults.foods = foods
             myFoodResults.isLoading = false
+            myFoodResults.canLoadMorePages = haveMoreResults
         case .verified:
             verifiedResults.foods = foods
             verifiedResults.isLoading = false
+            verifiedResults.canLoadMorePages = haveMoreResults
         case .datasets:
             datasetResults.foods = foods
             datasetResults.isLoading = false
+            datasetResults.canLoadMorePages = haveMoreResults
         }
     }
     

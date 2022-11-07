@@ -85,7 +85,7 @@ public class SearchManager: ObservableObject {
             }
         }
         
-        let foods = try await dataProvider.getFoods(
+        let (foods, haveMoreResults) = try await dataProvider.getFoods(
             scope: scope,
             searchText: searchText,
             page: 1
@@ -93,7 +93,7 @@ public class SearchManager: ObservableObject {
 
         await MainActor.run {
             withAnimation {
-                searchViewModel.completeScope(scope, with: foods)
+                searchViewModel.completeScope(scope, with: foods, haveMoreResults: haveMoreResults)
             }
         }
     }

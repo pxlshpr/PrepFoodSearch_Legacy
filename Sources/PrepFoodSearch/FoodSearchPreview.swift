@@ -19,9 +19,9 @@ class MockDataProvider: SearchDataProvider {
         mockFoodsArray
     }
     
-    func getFoods(scope: SearchScope, searchText: String, page: Int = 1) async throws -> [Food] {
+    func getFoods(scope: SearchScope, searchText: String, page: Int = 1) async throws -> (foods: [Food], haveMoreResults: Bool) {
         try await sleepTask(Double.random(in: 2...5))
-        return mockFoodsArray
+        return (mockFoodsArray, false)
     }
     
     var mockFoodsArray: [Food] {
