@@ -12,10 +12,10 @@ public class SearchViewModel: ObservableObject {
     @Published var recents: [Food] = []
     @Published var allMyFoods: [Food] = []
     
-    @Published var myFoodResults: FoodSearchResults = FoodSearchResults()
+    @Published var myFoodResults: FoodSearchResults = FoodSearchResults(isLoading: true, foods: [])
     @Published var verifiedResults: FoodSearchResults = FoodSearchResults()
     @Published var datasetResults: FoodSearchResults = FoodSearchResults()
-
+    
     //MARK: - Legacy
     
     @Published var results = [FoodSearchResult]()
@@ -36,7 +36,10 @@ public class SearchViewModel: ObservableObject {
             /// (since this mostly happens during text entry, and we wouldn't want to constantly keep
             /// swapping the view)
             if myFoodResults.foods == nil {
+                myFoodResults.isLoading = true
                 myFoodResults.foods = []
+            }
+            if myFoodResults.foods?.isEmpty == true {
                 myFoodResults.isLoading = true
             }
         case .verified:
@@ -85,5 +88,18 @@ public class SearchViewModel: ObservableObject {
         case .datasets:
             datasetResults.isLoading = true
         }
+    }
+    
+    func clearBackendSearch() {
+        myFoodResults.foods = []
+        myFoodResults.currentPage = 1
+        myFoodResults.canLoadMorePages = true
+        myFoodResults.isLoading = false
+    }
+    
+    /// We determine this by examining the `FoodSearcResults` for both verified and datasets, and if they are both nil,
+    /// we can conclude that the user hasn't submitted search yet (as they begin as nil and then get assigned empty arrays at least)
+    var hasNotSubmittedSearchYet: Bool {
+        verifiedResults.foods == nil && datasetResults.foods == nil
     }
 }

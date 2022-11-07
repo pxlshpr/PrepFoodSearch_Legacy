@@ -17,7 +17,10 @@ public class SearchManager: ObservableObject {
     var networkSearchTask: Task<Void, Error>? = nil
 
     func performBackendSearch() async {
-        guard !searchViewModel.searchText.isEmpty else { return }
+        guard !searchViewModel.searchText.isEmpty else {
+            searchViewModel.clearBackendSearch()
+            return
+        }
         
         backendSearchTask?.cancel()
         backendSearchTask = Task {

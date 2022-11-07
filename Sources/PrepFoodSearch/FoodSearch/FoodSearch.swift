@@ -24,6 +24,8 @@ public struct FoodSearch: View {
     @State var isComparing = false
     
     @State var hasAppeared = false
+    @State var shouldShowRecents: Bool = true
+    @State var shouldShowSearchPrompt: Bool = false
     
     public init(dataProvider: SearchDataProvider) {
         
@@ -65,6 +67,10 @@ public struct FoodSearch: View {
     }
     
     func searchTextChanged(to searchText: String) {
+        withAnimation {
+            shouldShowRecents = searchText.isEmpty
+            shouldShowSearchPrompt = searchViewModel.hasNotSubmittedSearchYet && searchText.count >= 3
+        }
         Task {
             await searchManager.performBackendSearch()
         }
@@ -72,7 +78,7 @@ public struct FoodSearch: View {
 
     @ViewBuilder
     var list: some View {
-        if searchViewModel.searchText.isEmpty {
+        if shouldShowRecents {
             recentsList
         } else {
             resultsList
@@ -83,9 +89,6 @@ public struct FoodSearch: View {
         List {
             resultsContents
         }
-//        .safeAreaInset(edge: .bottom) {
-//            Spacer().frame(height: 0)
-//        }
         .listStyle(.sidebar)
     }
     
@@ -93,9 +96,6 @@ public struct FoodSearch: View {
         List {
             emptySearchContents
         }
-//        .safeAreaInset(edge: .bottom) {
-//            Spacer().frame(height: 90)
-//        }
         .listStyle(.insetGrouped)
     }
     
@@ -114,7 +114,6 @@ public struct FoodSearch: View {
     var createSection: some View {
         var createHeader: some View {
             Text("Create a Food")
-//            Label("Create a Food", systemImage: "plus")
         }
         return Group {
             Section(header: createHeader) {
@@ -171,6 +170,7 @@ public struct FoodSearch: View {
             foodsSection(for: .backend)
             foodsSection(for: .verified)
             foodsSection(for: .datasets)
+            searchPromptSection
         }
     }
     
@@ -186,6 +186,15 @@ public struct FoodSearch: View {
         }
     }
     
+    @ViewBuilder
+    var searchPromptSection: some View {
+        if shouldShowSearchPrompt {
+//            Section {
+            Text("Tap search to find foods matching '\(searchViewModel.searchText)' in our databases.")
+                    .foregroundColor(.secondary)
+//            }
+        }
+    }
     func foodsSection(for scope: SearchScope) -> some View {
         let results = searchViewModel.results(for: scope)
         return Group {
