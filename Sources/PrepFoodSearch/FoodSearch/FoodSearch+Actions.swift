@@ -1,5 +1,6 @@
 import SwiftUI
 import PrepDataTypes
+import SwiftHaptics
 
 extension FoodSearch {
 
@@ -15,5 +16,25 @@ extension FoodSearch {
     func isComparingChanged(to newValue: Bool) {
         searchIsFocused = false
     }
-
+    
+    func tappedCompare() {
+        Haptics.feedback(style: .medium)
+        if searchIsFocused {
+            searchIsFocused = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation {
+                    isComparing.toggle()
+                }
+            }
+        } else {
+            withAnimation {
+                isComparing.toggle()
+            }
+        }
+    }
+    
+    func tappedClose() {
+        Haptics.feedback(style: .soft)
+        dismiss()
+    }
 }

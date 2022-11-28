@@ -98,6 +98,12 @@ public class SearchViewModel: ObservableObject {
     var hasNotSubmittedSearchYet: Bool {
         verifiedResults.foods == nil && datasetResults.foods == nil
     }
+    
+    var hasResults: Bool {
+        myFoodResults.foods?.isEmpty == false
+        || verifiedResults.foods?.isEmpty == false
+        || datasetResults.foods?.isEmpty == false
+    }
 }
 
 extension FoodSearchResults {

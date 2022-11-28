@@ -71,12 +71,7 @@ extension FoodSearch {
     
     var leadingToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarLeading) {
-            Button {
-                Haptics.feedback(style: .soft)
-                dismiss()
-            } label: {
-                closeButtonLabel
-            }
+            compareButton
         }
     }
 
@@ -106,20 +101,23 @@ extension FoodSearch {
     
     var trailingContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
+            closeButton
+        }
+    }
+    
+    var closeButton: some View {
+        Button {
+            tappedClose()
+        } label: {
+            closeButtonLabel
+        }
+    }
+    
+    @ViewBuilder
+    var compareButton: some View {
+        if searchViewModel.hasResults {
             Button {
-                Haptics.feedback(style: .medium)
-                if searchIsFocused {
-                    searchIsFocused = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        withAnimation {
-                            isComparing.toggle()
-                        }
-                    }
-                } else {
-                    withAnimation {
-                        isComparing.toggle()
-                    }
-                }
+                tappedCompare()
             } label: {
                 Label("Compare", systemImage: "rectangle.portrait.on.rectangle.portrait.angled\(isComparing ? ".fill" : "")")
             }
