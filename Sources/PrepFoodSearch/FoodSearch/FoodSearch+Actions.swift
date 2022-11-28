@@ -34,7 +34,11 @@ extension FoodSearch {
     }
     
     func tappedClose() {
-        Haptics.feedback(style: .soft)
-        dismiss()
+        if let didTapClose {
+            didTapClose()
+        } else {
+            Haptics.feedback(style: .soft)
+            dismiss()
+        }
     }
 }

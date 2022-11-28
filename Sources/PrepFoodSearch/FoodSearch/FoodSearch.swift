@@ -27,12 +27,14 @@ public struct FoodSearch: View {
     @State var shouldShowRecents: Bool = true
     @State var shouldShowSearchPrompt: Bool = false
     
+    let didTapClose: (() -> ())?
     let didTapFood: (Food) -> ()
     let didTapMacrosIndicatorForFood: (Food) -> ()
     
     public init(
         dataProvider: SearchDataProvider,
         shouldDelayContents: Bool = true,
+        didTapClose: (() -> ())? = nil,
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
     ) {
@@ -46,6 +48,7 @@ public struct FoodSearch: View {
         )
         _searchManager = StateObject(wrappedValue: searchManager)
         
+        self.didTapClose = didTapClose
         self.didTapFood = didTapFood
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
         
