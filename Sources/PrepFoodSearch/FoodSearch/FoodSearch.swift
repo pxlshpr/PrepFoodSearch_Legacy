@@ -23,7 +23,7 @@ public struct FoodSearch: View {
     
     @State var isComparing = false
     
-    @State var hasAppeared = false
+    @State var hasAppeared: Bool
     @State var shouldShowRecents: Bool = true
     @State var shouldShowSearchPrompt: Bool = false
     
@@ -32,6 +32,7 @@ public struct FoodSearch: View {
     
     public init(
         dataProvider: SearchDataProvider,
+        shouldDelayContents: Bool = true,
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
     ) {
@@ -47,6 +48,8 @@ public struct FoodSearch: View {
         
         self.didTapFood = didTapFood
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
+        
+        _hasAppeared = State(initialValue: shouldDelayContents ? false : true)
     }
     
     @ViewBuilder
