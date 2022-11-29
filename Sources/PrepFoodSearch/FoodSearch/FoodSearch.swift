@@ -15,7 +15,6 @@ public struct FoodSearch: View {
     @StateObject var searchManager: SearchManager
 
     @State var showingBarcodeScanner = false
-    @State var searchIsFocused = false
     @State var showingFilters = false
     
     @State var searchingVerified = false
@@ -26,7 +25,9 @@ public struct FoodSearch: View {
     @State var hasAppeared: Bool
     @State var shouldShowRecents: Bool = true
     @State var shouldShowSearchPrompt: Bool = false
-    
+
+    @Binding var searchIsFocused: Bool
+
     let didTapClose: (() -> ())?
     let didTapFood: (Food) -> ()
     let didTapMacrosIndicatorForFood: (Food) -> ()
@@ -34,6 +35,7 @@ public struct FoodSearch: View {
     public init(
         dataProvider: SearchDataProvider,
         shouldDelayContents: Bool = true,
+        searchIsFocused: Binding<Bool>,
         didTapClose: (() -> ())? = nil,
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
@@ -53,6 +55,8 @@ public struct FoodSearch: View {
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
         
         _hasAppeared = State(initialValue: shouldDelayContents ? false : true)
+        
+        _searchIsFocused = searchIsFocused
     }
     
     @ViewBuilder

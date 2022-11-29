@@ -11,12 +11,15 @@ public struct FoodSearchPreview: View {
     
     @State var foodToShowMacrosFor: Food? = nil
     
+    @State var searchIsFocused: Bool = false
+    
     public init() { }
 
     public var body: some View {
         NavigationStack(path: $path) {
             FoodSearch(
                 dataProvider: MockDataProvider(),
+                searchIsFocused: $searchIsFocused,
                 didTapFood: {
                     self.path = [.food($0)]
                 },

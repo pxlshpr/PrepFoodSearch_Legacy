@@ -9,7 +9,7 @@ extension FoodSearch {
             searchText: $searchViewModel.searchText,
             promptSuffix: "Foods",
             focused: $searchIsFocused,
-            focusOnAppear: false,
+            focusOnAppear: true,
             isHidden: $isComparing,
             didSubmit: didSubmit,
             buttonViews: {
