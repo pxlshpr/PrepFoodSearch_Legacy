@@ -38,17 +38,20 @@ public class SearchManager: ObservableObject {
         }
     }
     
+    var supportedScopes: [SearchScope] {
+//        [.verified, .datasets]
+        [.verified]
+    }
+
     func performNetworkSearch() async {
         networkSearchTask?.cancel()
         networkSearchTask = Task {
             try await withThrowingTaskGroup(of: Result<SearchScope, SearchError>.self) { group in
-                    
-                
-                for scope in [SearchScope.verified, SearchScope.datasets] {
+                for scope in supportedScopes {
                     group.addTask {
                         do {
                             try await self.search(scope: scope, with: self.searchViewModel.searchText)
-                            return .success(.backend)
+                            return .success(scope)
                         } catch let error where error is CancellationError {
                             return .failure(.cancelled(scope))
                         } catch {

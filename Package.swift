@@ -15,13 +15,13 @@ let package = Package(
             targets: ["PrepFoodSearch"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pxlshpr/FoodLabel", from: "0.0.29"),
-        .package(url: "https://github.com/pxlshpr/PrepDataTypes", from: "0.0.186"),
+        .package(url: "https://github.com/pxlshpr/FoodLabel", from: "0.0.30"),
+        .package(url: "https://github.com/pxlshpr/PrepDataTypes", from: "0.0.233"),
         .package(url: "https://github.com/pxlshpr/PrepNetworkController", from: "0.0.22"),
-        .package(url: "https://github.com/pxlshpr/PrepViews", from: "0.0.57"),
+        .package(url: "https://github.com/pxlshpr/PrepViews", from: "0.0.125"),
         .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.86"),
         .package(url: "https://github.com/pxlshpr/SwiftUICamera", from: "0.0.35"),
-        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.234"),
+        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.237"),
         .package(url: "https://github.com/exyte/ActivityIndicatorView", from: "1.1.0"),
     ],
     targets: [

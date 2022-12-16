@@ -213,7 +213,7 @@ public struct FoodSearch: View {
         Group {
             foodsSection(for: .backend)
             foodsSection(for: .verified)
-            foodsSection(for: .datasets)
+//            foodsSection(for: .datasets)
             searchPromptSection
         }
     }
@@ -275,7 +275,9 @@ public struct FoodSearch: View {
     var verifiedHeader: some View {
         HStack {
             Image(systemName: "checkmark.seal.fill")
-                .foregroundColor(.green)
+//                .foregroundColor(.green)
+                .foregroundColor(.accentColor)
+                .imageScale(.large)
             Text("Verified Foods")
         }
     }
