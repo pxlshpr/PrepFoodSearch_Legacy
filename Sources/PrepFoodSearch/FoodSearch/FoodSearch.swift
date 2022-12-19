@@ -32,9 +32,12 @@ public struct FoodSearch: View {
     let didTapFood: (Food) -> ()
     let didTapMacrosIndicatorForFood: (Food) -> ()
     
+    let focusOnAppear: Bool
+    
     public init(
         dataProvider: SearchDataProvider,
         shouldDelayContents: Bool = true,
+        focusOnAppear: Bool = false,
         searchIsFocused: Binding<Bool>,
         didTapClose: (() -> ())? = nil,
         didTapFood: @escaping ((Food) -> ()),
@@ -50,6 +53,9 @@ public struct FoodSearch: View {
         )
         _searchManager = StateObject(wrappedValue: searchManager)
         
+        self.focusOnAppear = focusOnAppear
+        
+        //TODO: Replace this with a single action handler and an (associated) enum
         self.didTapClose = didTapClose
         self.didTapFood = didTapFood
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
