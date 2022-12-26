@@ -21,7 +21,7 @@ let package = Package(
         .package(url: "https://github.com/pxlshpr/PrepViews", from: "0.0.127"),
         .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.86"),
         .package(url: "https://github.com/pxlshpr/SwiftUICamera", from: "0.0.35"),
-        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.266"),
+        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.267"),
         .package(url: "https://github.com/exyte/ActivityIndicatorView", from: "1.1.0"),
     ],
     targets: [

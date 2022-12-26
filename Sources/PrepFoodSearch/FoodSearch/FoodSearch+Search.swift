@@ -12,7 +12,7 @@ extension FoodSearch {
             focusOnAppear: focusOnAppear,
             isHidden: $isComparing,
             showKeyboardDismiss: true,
-            didDismiss: didDismiss,
+            showDismiss: true,
             didSubmit: didSubmit,
             buttonViews: {
                 EmptyView()
