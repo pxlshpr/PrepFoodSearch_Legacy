@@ -82,13 +82,31 @@ extension FoodSearch {
                     Text(title)
                         .font(.headline)
                 } else {
-                    Picker("", selection: $searchViewModel.foodType) {
-                        ForEach(FoodType.allCases, id: \.self) {
-                            Label("\($0.description)s", systemImage: $0.systemImage).tag($0)
-                                .labelStyle(.titleAndIcon)
+                    Menu {
+                        Picker(selection: $searchViewModel.foodType, label: EmptyView()) {
+                            ForEach(FoodType.allCases, id: \.self) {
+                                Label("\($0.description)s", systemImage: $0.systemImage).tag($0)
+                                    .labelStyle(.titleAndIcon)
+                            }
                         }
+                    } label: {
+                        HStack {
+                            Label("\(searchViewModel.foodType.description)s", systemImage: searchViewModel.foodType.systemImage)
+                                .labelStyle(.titleAndIcon)
+                            Image(systemName: "chevron.up.chevron.down")
+                                .imageScale(.small)
+                                .fontWeight(.medium)
+                        }
+                        .animation(.none, value: searchViewModel.foodType)
                     }
-                    .pickerStyle(.menu)
+//                    Picker("", selection: $searchViewModel.foodType) {
+//                        ForEach(FoodType.allCases, id: \.self) {
+//
+//                            Label("\($0.description)s", systemImage: $0.systemImage).tag($0)
+//                                .labelStyle(.titleAndIcon)
+//                        }
+//                    }
+//                    .pickerStyle(.menu)
                     .fixedSize(horizontal: true, vertical: false)
                     .contentShape(Rectangle())
                     .simultaneousGesture(TapGesture().onEnded {
