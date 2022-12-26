@@ -19,6 +19,7 @@ public struct FoodSearchPreview: View {
         NavigationStack(path: $path) {
             FoodSearch(
                 dataProvider: MockDataProvider(),
+                focusOnAppear: true,
                 searchIsFocused: $searchIsFocused,
                 didTapFood: {
                     self.path = [.food($0)]

@@ -122,6 +122,7 @@ public struct FoodSearch: View {
         List {
             resultsContents
         }
+        .scrollContentBackground(.hidden)
         .listStyle(.sidebar)
     }
     
@@ -129,6 +130,7 @@ public struct FoodSearch: View {
         List {
             emptySearchContents
         }
+        .scrollContentBackground(.hidden)
         .listStyle(.insetGrouped)
     }
     
@@ -141,6 +143,7 @@ public struct FoodSearch: View {
                 allMyFoodsSection
             }
             createSection
+            Spacer().frame(height: 37 + 5)
         }
     }
     
@@ -166,6 +169,7 @@ public struct FoodSearch: View {
                     Label("Import a Food from MyFitnessPal", systemImage: "square.and.arrow.down")
                 }
             }
+            .listRowBackground(FormCellBackground())
         }
     }
     
@@ -194,6 +198,7 @@ public struct FoodSearch: View {
                 foodButton(for: food)
             }
         }
+        .listRowBackground(FormCellBackground())
     }
     
     func foodButton(for food: Food) -> some View {
@@ -227,6 +232,7 @@ public struct FoodSearch: View {
             foodsSection(for: .verified)
 //            foodsSection(for: .datasets)
             searchPromptSection
+            Spacer().frame(height: 37 + 5)
         }
     }
     
@@ -275,6 +281,7 @@ public struct FoodSearch: View {
                         }
                     }
                 }
+                .listRowBackground(FormCellBackground())
             }
         }
     }
