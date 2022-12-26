@@ -101,7 +101,7 @@ extension FoodSearch {
     
     var trailingContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
-            closeButton
+//            closeButton
         }
     }
     

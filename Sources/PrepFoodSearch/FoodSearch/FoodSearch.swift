@@ -65,16 +65,22 @@ public struct FoodSearch: View {
         _searchIsFocused = searchIsFocused
     }
     
+    var background: some View {
+        FormBackground()
+            .edgesIgnoringSafeArea(.all)
+    }
+    
     @ViewBuilder
     public var body: some View {
         ZStack {
             if !hasAppeared {
-                Color(.systemGroupedBackground)
+                background
             } else {
                 searchableView
                     .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
                     .sheet(isPresented: $showingFilters) { filtersSheet }
                     .onChange(of: isComparing, perform: isComparingChanged)
+                    .background(background)
             }
         }
         .onAppear {
