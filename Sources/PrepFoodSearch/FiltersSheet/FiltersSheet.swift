@@ -153,8 +153,8 @@ struct FiltersSheet_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             Color.clear
-//                .navigationTitle("Search")
-//                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("Search")
+                .navigationBarTitleDisplayMode(.inline)
                 .sheet(isPresented: .constant(true)) {
                     FiltersSheetPreview()
                 }
