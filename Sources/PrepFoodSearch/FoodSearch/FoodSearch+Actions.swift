@@ -41,4 +41,8 @@ extension FoodSearch {
             dismiss()
         }
     }
+    
+    func didDismiss() {
+        tappedClose()
+    }
 }

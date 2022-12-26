@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/FoodLabel",
       "state" : {
-        "revision" : "3cd95ff3be2a3ca45095dcbd6c3eeb15ca7fc32f",
-        "version" : "0.0.29"
+        "revision" : "a28efc8afb7582cdc6d101c429856ae59343f6d5",
+        "version" : "0.0.30"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/FoodLabelScanner",
       "state" : {
-        "revision" : "8bbf8a10a888151409cf7a91d292c1788b0b624b",
-        "version" : "0.0.81"
+        "revision" : "8b6af10146252411113a069c6e8d5f4aa3531082",
+        "version" : "0.0.82"
       }
     },
     {
@@ -32,8 +32,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/PrepDataTypes",
       "state" : {
-        "revision" : "fb489abd0231fe9fd428905ff27399e1431cf061",
-        "version" : "0.0.186"
+        "revision" : "c548cb77191980571606db6e26dd50f75a71a651",
+        "version" : "0.0.235"
+      }
+    },
+    {
+      "identity" : "prepmocks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pxlshpr/PrepMocks",
+      "state" : {
+        "revision" : "ecf161115522677d7b28a47f7bf2b4ac50831251",
+        "version" : "0.0.3"
       }
     },
     {
@@ -50,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/PrepViews",
       "state" : {
-        "revision" : "ee2c3f5cdfaf367d84f57c9874ccca743bb74fde",
-        "version" : "0.0.57"
+        "revision" : "66e0556ebe1f0a300e48aa83066fce9835597820",
+        "version" : "0.0.129"
       }
     },
     {
@@ -73,6 +82,15 @@
       }
     },
     {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/SwiftUI-Introspect",
+      "state" : {
+        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
+        "version" : "0.1.4"
+      }
+    },
+    {
       "identity" : "swiftuicamera",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/SwiftUICamera",
@@ -82,12 +100,21 @@
       }
     },
     {
+      "identity" : "swiftuipager",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fermoya/SwiftUIPager",
+      "state" : {
+        "revision" : "4ddc04c801aac143090bb14cf26603a3bf9c74cb",
+        "version" : "2.5.0"
+      }
+    },
+    {
       "identity" : "swiftuisugar",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/SwiftUISugar",
       "state" : {
-        "revision" : "9abad170d0994caf1fbcb8436ed301160a63be8f",
-        "version" : "0.0.234"
+        "revision" : "d9b875b528cfb11d7bb074e501c9302c9a49c15d",
+        "version" : "0.0.256"
       }
     },
     {
