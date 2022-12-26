@@ -143,7 +143,9 @@ public struct FoodSearch: View {
                 allMyFoodsSection
             }
             createSection
-            Spacer().frame(height: 37 + 5)
+            Section(header: Text("")) {
+                EmptyView()
+            }
         }
     }
     
@@ -232,7 +234,6 @@ public struct FoodSearch: View {
             foodsSection(for: .verified)
 //            foodsSection(for: .datasets)
             searchPromptSection
-            Spacer().frame(height: 37 + 5)
         }
     }
     
