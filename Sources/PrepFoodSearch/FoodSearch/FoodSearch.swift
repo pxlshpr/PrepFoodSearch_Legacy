@@ -253,8 +253,13 @@ public struct FoodSearch: View {
     var searchPromptSection: some View {
         if shouldShowSearchPrompt {
 //            Section {
-            Text("Tap search to find foods matching '\(searchViewModel.searchText)' in our databases.")
-                    .foregroundColor(.secondary)
+            Button {
+                didSubmit()
+            } label: {
+                Text("Tap search to find foods matching '\(searchViewModel.searchText)' in our databases.")
+                        .foregroundColor(.secondary)
+            }
+            .listRowBackground(FormCellBackground())
 //            }
         }
     }
