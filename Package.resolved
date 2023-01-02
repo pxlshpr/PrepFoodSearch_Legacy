@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pxlshpr/SwiftUICamera",
       "state" : {
-        "revision" : "a9070d0f46a1f9290952aeb6f8e59e321707d31a",
-        "version" : "0.0.36"
+        "revision" : "5952ef7429d19dd8f0d3925d61131322e724c438",
+        "version" : "0.0.39"
       }
     },
     {
