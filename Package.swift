@@ -20,7 +20,7 @@ let package = Package(
         .package(url: "https://github.com/pxlshpr/PrepNetworkController", from: "0.0.22"),
         .package(url: "https://github.com/pxlshpr/PrepViews", from: "0.0.129"),
         .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.86"),
-        .package(url: "https://github.com/pxlshpr/SwiftUICamera", from: "0.0.36"),
+        .package(url: "https://github.com/pxlshpr/SwiftUICamera", from: "0.0.39"),
         .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.320"),
         .package(url: "https://github.com/exyte/ActivityIndicatorView", from: "1.1.0"),
     ],
