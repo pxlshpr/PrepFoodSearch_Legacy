@@ -13,6 +13,7 @@ extension FoodSearch {
             isHidden: $isComparing,
             showKeyboardDismiss: true,
             showDismiss: true,
+            didTapDismiss: didTapClose,
             didSubmit: didSubmit,
             buttonViews: {
                 EmptyView()
