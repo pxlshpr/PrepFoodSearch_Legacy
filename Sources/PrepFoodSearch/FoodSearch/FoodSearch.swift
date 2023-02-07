@@ -25,6 +25,8 @@ public struct FoodSearch: View {
     @State var hasAppeared: Bool
     @State var shouldShowRecents: Bool = true
     @State var shouldShowSearchPrompt: Bool = false
+    
+    @State var showingAddFood = false
 
     @Binding var searchIsFocused: Bool
 
@@ -87,6 +89,9 @@ public struct FoodSearch: View {
         .toolbar { principalContent }
         .toolbar { leadingToolbar }
         .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
+        .sheet(isPresented: $showingAddFood) {
+            Text("Food Form goes here")
+        }
     }
     
     @ViewBuilder
@@ -158,6 +163,7 @@ public struct FoodSearch: View {
         return Group {
             Section {
                 Button {
+                    showingAddFood = true
 //                    didTapAddFood()
                 } label: {
                     Label("Add a Food", systemImage: "plus")
