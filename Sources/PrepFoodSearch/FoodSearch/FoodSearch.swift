@@ -206,9 +206,9 @@ public struct FoodSearch: View {
                 allMyFoodsSection
             }
             createSection
-            Section(header: Text("")) {
-                EmptyView()
-            }
+//            Section(header: Text("")) {
+//                EmptyView()
+//            }
         }
     }
     
