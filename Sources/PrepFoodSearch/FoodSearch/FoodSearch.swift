@@ -9,6 +9,11 @@ import PrepViews
 
 public struct FoodSearch: View {
     
+    @Environment(\.scenePhase) var scenePhase
+    @State var wasInBackground: Bool = false
+    @State var focusFakeKeyboardWhenVisible = false
+    @FocusState var fakeKeyboardFocused: Bool
+
     @Environment(\.dismiss) var dismiss
     
     @StateObject var searchViewModel: SearchViewModel
@@ -89,8 +94,53 @@ public struct FoodSearch: View {
         .toolbar { principalContent }
         .toolbar { leadingToolbar }
         .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
+        .onChange(of: scenePhase, perform: scenePhaseChanged)
+        .onChange(of: showingAddFood, perform: showingAddFoodChanged)
         .sheet(isPresented: $showingAddFood) {
             Text("Food Form goes here")
+        }
+    }
+
+    func scenePhaseChanged(to newPhase: ScenePhase) {
+        switch newPhase {
+        case .background:
+            wasInBackground = true
+        case .active:
+            if wasInBackground, showingAddFood {
+                focusFakeKeyboardWhenVisible = true
+                wasInBackground = false
+            }
+        default:
+            break
+        }
+    }
+    
+    var fakeTextField: some View {
+        TextField("", text: .constant(""))
+            .focused($fakeKeyboardFocused)
+            .opacity(0)
+    }
+
+    func showingAddFoodChanged(_ showing: Bool) {
+        guard !showing else { return }
+        guard focusFakeKeyboardWhenVisible else { return }
+        focusFakeKeyboardWhenVisible = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            fakeKeyboardFocused = true
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                fakeKeyboardFocused = false
+            }
+            /// failsafe in case it wasn't unfocused
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+                fakeKeyboardFocused = false
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                fakeKeyboardFocused = false
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                fakeKeyboardFocused = false
+            }
         }
     }
     
@@ -100,11 +150,14 @@ public struct FoodSearch: View {
             if !hasAppeared {
                 background
             } else {
-                searchableView
-                    .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
-                    .sheet(isPresented: $showingFilters) { filtersSheet }
-                    .onChange(of: isComparing, perform: isComparingChanged)
-                    .background(background)
+                ZStack {
+                    searchableView
+                    fakeTextField
+                }
+                .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
+                .sheet(isPresented: $showingFilters) { filtersSheet }
+                .onChange(of: isComparing, perform: isComparingChanged)
+                .background(background)
             }
 //        }
     }
@@ -163,10 +216,13 @@ public struct FoodSearch: View {
         return Group {
             Section {
                 Button {
-                    showingAddFood = true
+                    searchIsFocused = false
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        showingAddFood = true
+//                    }
 //                    didTapAddFood()
                 } label: {
-                    Label("Add a Food", systemImage: "plus")
+                    Label("Create New Food", systemImage: "plus")
                 }
 //                Button {
 //
