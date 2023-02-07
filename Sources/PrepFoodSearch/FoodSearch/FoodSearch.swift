@@ -155,26 +155,18 @@ public struct FoodSearch: View {
     }
     
     var createSection: some View {
-        var createHeader: some View {
-            Text("Create a Food")
-        }
         return Group {
-            Section(header: createHeader) {
+            Section {
                 Button {
-                    
+//                    didTapAddFood()
                 } label: {
-                    Label("Start with an Empty Food", systemImage: "square.and.pencil")
+                    Label("Add a Food", systemImage: "plus")
                 }
-                Button {
-                    
-                } label: {
-                    Label("Scan a Food Label or Screenshot", systemImage: "text.viewfinder")
-                }
-                Button {
-                    
-                } label: {
-                    Label("Import a Food from MyFitnessPal", systemImage: "square.and.arrow.down")
-                }
+//                Button {
+//
+//                } label: {
+//                    Label("Scan a Food Label", systemImage: "text.viewfinder")
+//                }
             }
             .listRowBackground(FormCellBackground())
         }

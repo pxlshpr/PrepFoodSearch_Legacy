@@ -21,6 +21,9 @@ public struct FoodSearchPreview: View {
                 dataProvider: MockDataProvider(),
                 focusOnAppear: true,
                 searchIsFocused: $searchIsFocused,
+                didTapAddFood: {
+                    
+                },
                 didTapFood: {
                     self.path = [.food($0)]
                 },
