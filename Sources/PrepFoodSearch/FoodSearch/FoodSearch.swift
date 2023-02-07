@@ -72,17 +72,7 @@ public struct FoodSearch: View {
     
     @ViewBuilder
     public var body: some View {
-        ZStack {
-            if !hasAppeared {
-                background
-            } else {
-                searchableView
-                    .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
-                    .sheet(isPresented: $showingFilters) { filtersSheet }
-                    .onChange(of: isComparing, perform: isComparingChanged)
-                    .background(background)
-            }
-        }
+        content
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 withAnimation {
@@ -97,6 +87,21 @@ public struct FoodSearch: View {
         .toolbar { principalContent }
         .toolbar { leadingToolbar }
         .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
+    }
+    
+    @ViewBuilder
+    var content: some View {
+//        ZStack {
+            if !hasAppeared {
+                background
+            } else {
+                searchableView
+                    .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
+                    .sheet(isPresented: $showingFilters) { filtersSheet }
+                    .onChange(of: isComparing, perform: isComparingChanged)
+                    .background(background)
+            }
+//        }
     }
     
     func searchTextChanged(to searchText: String) {
