@@ -29,6 +29,7 @@ public class SearchManager: ObservableObject {
             let start = CFAbsoluteTimeGetCurrent()
             do {
                 try await self.search(scope: .backend, with: self.searchViewModel.searchText)
+                try await self.search(scope: .verifiedLocal, with: self.searchViewModel.searchText)
                 print("🔎 Backend Search completed in \(CFAbsoluteTimeGetCurrent()-start)s")
             } catch let error where error is CancellationError {
                 print("🔎✋🏽 Backend Search was cancelled")
@@ -89,7 +90,7 @@ public class SearchManager: ObservableObject {
         
         await MainActor.run {
             withAnimation {
-                searchViewModel.setScopeAsLoading(scope)
+                searchViewModel.setInitialLoadingState(for: scope)
             }
         }
         
@@ -101,7 +102,33 @@ public class SearchManager: ObservableObject {
 
         await MainActor.run {
             withAnimation {
-                searchViewModel.completeScope(scope, with: foods, haveMoreResults: haveMoreResults)
+                searchViewModel.addResults(
+                    for: scope,
+                    with: foods,
+                    haveMoreResults: haveMoreResults
+                )
+            }
+        }
+    }
+    
+    func loadMoreResults(for scope: SearchScope) {
+        searchViewModel.setLoadingState(for: scope)
+
+        Task {
+            let (foods, haveMoreResults) = try await dataProvider.getFoods(
+                scope: scope,
+                searchText: searchViewModel.searchText,
+                page: searchViewModel.currentPage + 1
+            )
+
+            await MainActor.run {
+                withAnimation {
+                    searchViewModel.addResults(
+                        for: scope,
+                        with: foods,
+                        haveMoreResults: haveMoreResults
+                    )
+                }
             }
         }
     }

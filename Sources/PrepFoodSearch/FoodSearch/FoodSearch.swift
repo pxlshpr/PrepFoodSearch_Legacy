@@ -301,7 +301,7 @@ public struct FoodSearch: View {
         switch scope {
         case .backend:
             Text("My Foods")
-        case .verified:
+        case .verified, .verifiedLocal:
             verifiedHeader
         case .datasets:
             publicDatasetsHeader
@@ -341,7 +341,7 @@ public struct FoodSearch: View {
                             loadingCell
                         } else if results.canLoadMorePages {
                             loadMoreCell {
-                                searchViewModel.loadMoreResults(for: scope)
+                                searchManager.loadMoreResults(for: scope)
                             }
                         }
                     }

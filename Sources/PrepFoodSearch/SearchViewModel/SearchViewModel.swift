@@ -13,6 +13,7 @@ public class SearchViewModel: ObservableObject {
     @Published var allMyFoods: [Food] = []
     
     @Published var myFoodResults: FoodSearchResults = FoodSearchResults(isLoading: true, foods: [])
+    @Published var verifiedLocalResults: FoodSearchResults = FoodSearchResults(isLoading: true, foods: [])
     @Published var verifiedResults: FoodSearchResults = FoodSearchResults()
     @Published var datasetResults: FoodSearchResults = FoodSearchResults()
     
@@ -29,7 +30,8 @@ public class SearchViewModel: ObservableObject {
         self.allMyFoods = allMyFoods
     }
     
-    public func setScopeAsLoading(_ scope: SearchScope) {
+    //TODO: Rename to setInitialLoadingState
+    public func setInitialLoadingState(for scope: SearchScope) {
         switch scope {
         case .backend:
             /// Don't show loading indicator if we're searching the backend while we already have results
@@ -38,21 +40,48 @@ public class SearchViewModel: ObservableObject {
             break
         case .verified:
             verifiedResults.isLoading = true
-            verifiedResults.foods = []
+            verifiedResults.foods = verifiedLocalResults.foods
         case .datasets:
             datasetResults.isLoading = true
             datasetResults.foods = []
+        case .verifiedLocal:
+            break
         }
     }
     
-    public func completeScope(_ scope: SearchScope, with foods: [Food], haveMoreResults: Bool) {
+    public func setLoadingState(for scope: SearchScope) {
+        switch scope {
+        case .backend:
+            myFoodResults.isLoading = true
+        case .verified:
+            verifiedResults.isLoading = true
+        case .datasets:
+            datasetResults.isLoading = true
+        case .verifiedLocal:
+            verifiedLocalResults.isLoading = true
+        }
+    }
+    
+    public func addResults(for scope: SearchScope, with foods: [Food], haveMoreResults: Bool) {
         switch scope {
         case .backend:
             myFoodResults.foods = foods
             myFoodResults.isLoading = false
             myFoodResults.canLoadMorePages = haveMoreResults
         case .verified:
+            if let existingFoods = verifiedResults.foods {
+                //TODO: Make sure we're not adding duplicates here
+                var foods = existingFoods + foods
+                foods.removeDuplicateFoods()
+                verifiedResults.foods = foods
+            } else {
+                verifiedResults.foods = foods
+            }
+            verifiedResults.isLoading = false
+            verifiedResults.canLoadMorePages = haveMoreResults
+        case .verifiedLocal:
             verifiedResults.foods = foods
+            verifiedLocalResults.foods = foods
             verifiedResults.isLoading = false
             verifiedResults.canLoadMorePages = haveMoreResults
         case .datasets:
@@ -70,17 +99,8 @@ public class SearchViewModel: ObservableObject {
             return verifiedResults
         case .datasets:
             return datasetResults
-        }
-    }
-    
-    public func loadMoreResults(for scope: SearchScope) {
-        switch scope {
-        case .backend:
-            myFoodResults.isLoading = true
-        case .verified:
-            verifiedResults.isLoading = true
-        case .datasets:
-            datasetResults.isLoading = true
+        case .verifiedLocal:
+            return verifiedLocalResults
         }
     }
     
@@ -112,5 +132,19 @@ extension FoodSearchResults {
         currentPage = 1
         canLoadMorePages = true
         isLoading = false
+    }
+}
+
+public extension Array where Element == Food {
+    func removingDuplicateFoods() -> [Food] {
+        var addedDict = [UUID: Bool]()
+
+        return filter {
+            addedDict.updateValue(true, forKey: $0.id) == nil
+        }
+    }
+
+    mutating func removeDuplicateFoods() {
+        self = self.removingDuplicateFoods()
     }
 }
