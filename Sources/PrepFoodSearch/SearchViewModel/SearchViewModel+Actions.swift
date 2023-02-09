@@ -74,12 +74,12 @@ extension SearchViewModel {
     
     func getFoods(for results: [FoodSearchResult]) {
         Task {
-            do {
+//            do {
 //                let newFoods = try await networkController.foods(for: results)
 //                foods.append(contentsOf: newFoods)
-            } catch {
-                print("Error getting foods: \(error)")
-            }
+//            } catch {
+//                print("Error getting foods: \(error)")
+//            }
         }
     }
 }
