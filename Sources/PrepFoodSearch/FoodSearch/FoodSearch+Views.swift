@@ -71,8 +71,15 @@ extension FoodSearch {
     
     var leadingContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarLeading) {
+            if isRootInNavigationStack {
+                closeButton
+            }
+        }
+    }
+    
+    var trailingContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarTrailing) {
             addButton
-//            compareButton
         }
     }
     
@@ -131,12 +138,6 @@ extension FoodSearch {
                     })
                 }
             }
-        }
-    }
-    
-    var trailingContent: some ToolbarContent {
-        ToolbarItemGroup(placement: .navigationBarTrailing) {
-            closeButton
         }
     }
     

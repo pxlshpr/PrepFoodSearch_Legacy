@@ -40,7 +40,7 @@ public struct FoodSearch: View {
     
     @State var showingAddFood = false
 
-    @State var showingAddHeroButton: Bool = true
+    @State var showingAddHeroButton: Bool
     
     @Binding var searchIsFocused: Bool
 
@@ -50,10 +50,12 @@ public struct FoodSearch: View {
     let didAddFood: (FoodFormOutput) -> ()
     
     let focusOnAppear: Bool
+    let isRootInNavigationStack: Bool
     
     public init(
         fields: FoodForm.Fields, sources: FoodForm.Sources, extractor: Extractor,
         dataProvider: SearchDataProvider,
+        isRootInNavigationStack: Bool,
         shouldDelayContents: Bool = true,
         focusOnAppear: Bool = false,
         searchIsFocused: Binding<Bool>,
@@ -62,6 +64,8 @@ public struct FoodSearch: View {
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
     ) {
+        self.isRootInNavigationStack = isRootInNavigationStack
+        
         self.foodFormFields = fields
         self.foodFormSources = sources
         self.foodFormExtractor = extractor
@@ -83,6 +87,7 @@ public struct FoodSearch: View {
         self.didTapFood = didTapFood
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
         
+        _showingAddHeroButton = State(initialValue: focusOnAppear)
         _hasAppeared = State(initialValue: shouldDelayContents ? false : true)
         
         _searchIsFocused = searchIsFocused
