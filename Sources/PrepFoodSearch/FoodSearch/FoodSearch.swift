@@ -47,6 +47,7 @@ public struct FoodSearch: View {
     let didTapClose: (() -> ())?
     let didTapFood: (Food) -> ()
     let didTapMacrosIndicatorForFood: (Food) -> ()
+    let didAddFood: (FoodFormOutput) -> ()
     
     let focusOnAppear: Bool
     
@@ -56,6 +57,7 @@ public struct FoodSearch: View {
         shouldDelayContents: Bool = true,
         focusOnAppear: Bool = false,
         searchIsFocused: Binding<Bool>,
+        didAddFood: @escaping (FoodFormOutput) -> (),
         didTapClose: (() -> ())? = nil,
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
@@ -76,6 +78,7 @@ public struct FoodSearch: View {
         self.focusOnAppear = focusOnAppear
         
         //TODO: Replace this with a single action handler and an (associated) enum
+        self.didAddFood = didAddFood
         self.didTapClose = didTapClose
         self.didTapFood = didTapFood
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
@@ -109,9 +112,16 @@ public struct FoodSearch: View {
         .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
         .onChange(of: scenePhase, perform: scenePhaseChanged)
         .onChange(of: searchIsFocused, perform: searchIsFocusedChanged)
-        .onChange(of: showingAddFood, perform: showingAddFoodChanged)
-        .sheet(isPresented: $showingAddFood) {
-            Text("Food Form goes here")
+//        .onChange(of: showingAddFood, perform: showingAddFoodChanged)
+        .fullScreenCover(isPresented: $showingAddFood) { foodForm }
+    }
+    
+    var foodForm: some View {
+        FoodForm(fields: foodFormFields, sources: foodFormSources, extractor: foodFormExtractor) { formOutput in
+            didAddFood(formOutput)
+        }
+        .onDisappear {
+            foodFormExtractor.cancelAllTasks()
         }
     }
     
@@ -195,7 +205,7 @@ public struct FoodSearch: View {
     
     var addHeroButton: some View {
         Button {
-            
+            showingAddFood = true
         } label: {
             Text("Create New Food")
             .foregroundColor(.white)
