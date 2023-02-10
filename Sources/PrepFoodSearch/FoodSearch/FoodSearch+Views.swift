@@ -80,7 +80,8 @@ extension FoodSearch {
     var addButton: some View {
         if !showingAddHeroButton {
             Button {
-                
+                Haptics.feedback(style: .soft)
+                showingAddFood = true
             } label: {
                 Image(systemName: "plus")
                     .frame(width: 50, height: 50)

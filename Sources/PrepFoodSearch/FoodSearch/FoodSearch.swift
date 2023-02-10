@@ -205,6 +205,7 @@ public struct FoodSearch: View {
     
     var addHeroButton: some View {
         Button {
+            Haptics.feedback(style: .soft)
             showingAddFood = true
         } label: {
             Text("Create New Food")
