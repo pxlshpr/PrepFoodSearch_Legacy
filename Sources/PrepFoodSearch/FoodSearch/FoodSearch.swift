@@ -6,17 +6,23 @@ import ActivityIndicatorView
 import Camera
 import SwiftSugar
 import PrepViews
+import PrepFoodForm
+import FoodLabelExtractor
 
 public struct FoodSearch: View {
     
     @Namespace var namespace
     @Environment(\.scenePhase) var scenePhase
+    @Environment(\.dismiss) var dismiss
+
+    @ObservedObject var foodFormFields: FoodForm.Fields
+    @ObservedObject var foodFormSources: FoodForm.Sources
+    @ObservedObject var foodFormExtractor: Extractor
+    
     @State var wasInBackground: Bool = false
     @State var focusFakeKeyboardWhenVisible = false
     @FocusState var fakeKeyboardFocused: Bool
 
-    @Environment(\.dismiss) var dismiss
-    
     @StateObject var searchViewModel: SearchViewModel
     @StateObject var searchManager: SearchManager
 
@@ -45,6 +51,7 @@ public struct FoodSearch: View {
     let focusOnAppear: Bool
     
     public init(
+        fields: FoodForm.Fields, sources: FoodForm.Sources, extractor: Extractor,
         dataProvider: SearchDataProvider,
         shouldDelayContents: Bool = true,
         focusOnAppear: Bool = false,
@@ -53,6 +60,9 @@ public struct FoodSearch: View {
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
     ) {
+        self.foodFormFields = fields
+        self.foodFormSources = sources
+        self.foodFormExtractor = extractor
         
         let searchViewModel = SearchViewModel(recents: dataProvider.recentFoods)
         _searchViewModel = StateObject(wrappedValue: searchViewModel)
