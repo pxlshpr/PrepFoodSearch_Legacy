@@ -9,6 +9,7 @@ import PrepViews
 
 public struct FoodSearch: View {
     
+    @Namespace var namespace
     @Environment(\.scenePhase) var scenePhase
     @State var wasInBackground: Bool = false
     @State var focusFakeKeyboardWhenVisible = false
@@ -33,6 +34,8 @@ public struct FoodSearch: View {
     
     @State var showingAddFood = false
 
+    @State var showingAddHeroButton: Bool = true
+    
     @Binding var searchIsFocused: Bool
 
     let didTapClose: (() -> ())?
@@ -92,12 +95,31 @@ public struct FoodSearch: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { trailingContent }
         .toolbar { principalContent }
-        .toolbar { leadingToolbar }
+        .toolbar { leadingContent }
         .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
         .onChange(of: scenePhase, perform: scenePhaseChanged)
+        .onChange(of: searchIsFocused, perform: searchIsFocusedChanged)
         .onChange(of: showingAddFood, perform: showingAddFoodChanged)
         .sheet(isPresented: $showingAddFood) {
             Text("Food Form goes here")
+        }
+    }
+    
+    @State var initialSearchIsFocusedChangeIgnored: Bool = false
+    
+    func hideHeroAddButton() {
+        withAnimation {
+            if showingAddHeroButton {
+                showingAddHeroButton = false
+            }
+        }
+    }
+    
+    func searchIsFocusedChanged(_ newValue: Bool) {
+        if initialSearchIsFocusedChangeIgnored {
+            hideHeroAddButton()
+        } else {
+            initialSearchIsFocusedChangeIgnored = true
         }
     }
 
@@ -146,23 +168,83 @@ public struct FoodSearch: View {
     
     @ViewBuilder
     var content: some View {
-//        ZStack {
-            if !hasAppeared {
-                background
-            } else {
-                ZStack {
-                    searchableView
-                    fakeTextField
-                }
-                .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
-                .sheet(isPresented: $showingFilters) { filtersSheet }
-                .onChange(of: isComparing, perform: isComparingChanged)
-                .background(background)
+        if !hasAppeared {
+            background
+        } else {
+            ZStack {
+                searchableView
+                addHeroLayer
+                fakeTextField
             }
-//        }
+            .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
+            .sheet(isPresented: $showingFilters) { filtersSheet }
+            .onChange(of: isComparing, perform: isComparingChanged)
+            .background(background)
+        }
+    }
+    
+    var addHeroButton: some View {
+        Button {
+            
+        } label: {
+            Text("Create New Food")
+            .foregroundColor(.white)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 25, style: .continuous)
+                    .fill(Color.accentColor.gradient)
+                    .frame(height: 50)
+                    .shadow(
+                        color: Color(.black).opacity(0.2),
+                        radius: 3, x: 0, y: 3
+                    )
+            )
+            .padding(.bottom, 65 + 10)
+        }
+    }
+    
+    var addHeroLayer: some View {
+        VStack {
+            Spacer()
+            if showingAddHeroButton {
+                addHeroButton
+                    .zIndex(12)
+                    .transition(.opacity)
+//                    .transition(.move(edge: .bottom))
+            }
+        }
+    }
+    
+    var searchableView: some View {
+        var content: some View {
+//            ZStack {
+                list
+//                addHeroLayer
+//            }
+        }
+        
+        return SearchableView(
+            searchText: $searchViewModel.searchText,
+            promptSuffix: "Foods",
+            focused: $searchIsFocused,
+            focusOnAppear: focusOnAppear,
+            isHidden: $isComparing,
+            showKeyboardDismiss: true,
+//            showDismiss: false,
+//            didTapDismiss: didTapClose,
+            didSubmit: didSubmit,
+            buttonViews: {
+                EmptyView()
+                scanButton
+            },
+            content: {
+                content
+            })
     }
     
     func searchTextChanged(to searchText: String) {
+        hideHeroAddButton()
         withAnimation {
             shouldShowRecents = searchText.isEmpty
             shouldShowSearchPrompt = searchViewModel.hasNotSubmittedSearchYet && searchText.count >= 3
@@ -205,7 +287,7 @@ public struct FoodSearch: View {
             } else if !searchViewModel.allMyFoods.isEmpty {
                 allMyFoodsSection
             }
-            createSection
+//            createSection
 //            Section(header: Text("")) {
 //                EmptyView()
 //            }
@@ -267,6 +349,7 @@ public struct FoodSearch: View {
             /// This is crucial to avoid having the search elements floating on top when we come back this view.
             /// This has something to do with triggering the navigation push from a list element.
             if searchIsFocused {
+                hideHeroAddButton()
                 didTapFood(food)
 //                searchIsFocused = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -274,6 +357,7 @@ public struct FoodSearch: View {
 //                    didTapFood(food)
                 }
             } else {
+                hideHeroAddButton()
                 didTapFood(food)
             }
         } label: {

@@ -69,9 +69,25 @@ extension FoodSearch {
     
     //MARK: - Toolbars
     
-    var leadingToolbar: some ToolbarContent {
+    var leadingContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarLeading) {
-            compareButton
+            addButton
+//            compareButton
+        }
+    }
+    
+    @ViewBuilder
+    var addButton: some View {
+        if !showingAddHeroButton {
+            Button {
+                
+            } label: {
+                Image(systemName: "plus")
+                    .frame(width: 50, height: 50)
+                    .matchedGeometryEffect(id: "hero-plus", in: namespace)
+            }
+            .contentShape(Rectangle())
+            .transition(.opacity)
         }
     }
 
