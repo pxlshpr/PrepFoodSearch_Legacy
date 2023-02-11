@@ -87,6 +87,7 @@ extension FoodSearch {
     var addButton: some View {
         if !showingAddHeroButton {
             Button {
+                didTapAddFood()
                 Haptics.feedback(style: .soft)
                 showingAddFood = true
             } label: {

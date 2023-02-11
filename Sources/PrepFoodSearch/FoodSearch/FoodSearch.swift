@@ -6,18 +6,18 @@ import ActivityIndicatorView
 import Camera
 import SwiftSugar
 import PrepViews
-import PrepFoodForm
-import FoodLabelExtractor
+//import PrepFoodForm
+//import FoodLabelExtractor
 
-public struct FoodSearch: View {
+public struct FoodSearch<Content: View>: View {
     
     @Namespace var namespace
     @Environment(\.scenePhase) var scenePhase
     @Environment(\.dismiss) var dismiss
 
-    @ObservedObject var foodFormFields: FoodForm.Fields
-    @ObservedObject var foodFormSources: FoodForm.Sources
-    @ObservedObject var foodFormExtractor: Extractor
+//    @ObservedObject var foodFormFields: FoodForm.Fields
+//    @ObservedObject var foodFormSources: FoodForm.Sources
+//    @ObservedObject var foodFormExtractor: Extractor
     
     @State var wasInBackground: Bool = false
     @State var focusFakeKeyboardWhenVisible = false
@@ -47,28 +47,33 @@ public struct FoodSearch: View {
     let didTapClose: (() -> ())?
     let didTapFood: (Food) -> ()
     let didTapMacrosIndicatorForFood: (Food) -> ()
-    let didAddFood: (FoodFormOutput) -> ()
+    let didTapAddFood: () -> ()
     
     let focusOnAppear: Bool
     let isRootInNavigationStack: Bool
     
+//    let foodForm: Content
+    let foodForm: () -> Content
+
     public init(
-        fields: FoodForm.Fields, sources: FoodForm.Sources, extractor: Extractor,
+        @ViewBuilder foodForm: @escaping () -> Content,
+//        fields: FoodForm.Fields, sources: FoodForm.Sources, extractor: Extractor,
         dataProvider: SearchDataProvider,
         isRootInNavigationStack: Bool,
         shouldDelayContents: Bool = true,
         focusOnAppear: Bool = false,
         searchIsFocused: Binding<Bool>,
-        didAddFood: @escaping (FoodFormOutput) -> (),
+        didTapAddFood: @escaping () -> (),
         didTapClose: (() -> ())? = nil,
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
     ) {
+        self.foodForm = foodForm
         self.isRootInNavigationStack = isRootInNavigationStack
         
-        self.foodFormFields = fields
-        self.foodFormSources = sources
-        self.foodFormExtractor = extractor
+//        self.foodFormFields = fields
+//        self.foodFormSources = sources
+//        self.foodFormExtractor = extractor
         
         let searchViewModel = SearchViewModel(recents: dataProvider.recentFoods)
         _searchViewModel = StateObject(wrappedValue: searchViewModel)
@@ -82,7 +87,7 @@ public struct FoodSearch: View {
         self.focusOnAppear = focusOnAppear
         
         //TODO: Replace this with a single action handler and an (associated) enum
-        self.didAddFood = didAddFood
+        self.didTapAddFood = didTapAddFood
         self.didTapClose = didTapClose
         self.didTapFood = didTapFood
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
@@ -118,18 +123,19 @@ public struct FoodSearch: View {
         .onChange(of: scenePhase, perform: scenePhaseChanged)
         .onChange(of: searchIsFocused, perform: searchIsFocusedChanged)
 //        .onChange(of: showingAddFood, perform: showingAddFoodChanged)
-        .fullScreenCover(isPresented: $showingAddFood) { foodForm }
+        .fullScreenCover(isPresented: $showingAddFood) { foodFormSheet }
     }
     
-    var foodForm: some View {
-        FoodForm(fields: foodFormFields, sources: foodFormSources, extractor: foodFormExtractor) { formOutput in
-            didAddFood(formOutput)
-        }
-        .onDisappear {
-            foodFormExtractor.cancelAllTasks()
-        }
+    var foodFormSheet: some View {
+        foodForm()
+//        FoodForm(fields: foodFormFields, sources: foodFormSources, extractor: foodFormExtractor) { formOutput in
+//            didAddFood(formOutput)
+//        }
+//        .onDisappear {
+//            foodFormExtractor.cancelAllTasks()
+//        }
     }
-    
+
     @State var initialSearchIsFocusedChangeIgnored: Bool = false
     
     func hideHeroAddButton() {
@@ -208,40 +214,73 @@ public struct FoodSearch: View {
         }
     }
     
-    var addHeroButton: some View {
-        Button {
-            Haptics.feedback(style: .soft)
-            showingAddFood = true
-        } label: {
-            Text("Create New Food")
-            .foregroundColor(.white)
-            .padding(.vertical, 10)
-            .padding(.horizontal, 20)
-            .background(
-                RoundedRectangle(cornerRadius: 25, style: .continuous)
-                    .fill(Color.accentColor.gradient)
-                    .frame(height: 50)
-                    .shadow(
-                        color: Color(.black).opacity(0.2),
-                        radius: 3, x: 0, y: 3
-                    )
-            )
-            .padding(.bottom, 65 + 10)
-        }
-    }
-    
     var addHeroLayer: some View {
         VStack {
             Spacer()
-            if showingAddHeroButton {
-                addHeroButton
-                    .zIndex(12)
-                    .transition(.opacity)
-//                    .transition(.move(edge: .bottom))
+            HStack {
+                Spacer()
+                if showingAddHeroButton {
+                    addHeroButton
+//                    addHeroMenu
+                        .transition(.opacity)
+                }
             }
+            .padding(.horizontal, 20)
+        }
+//        .ignoresSafeArea(.keyboard)
+        .padding(.bottom, 65 + 10)
+//        .edgesIgnoringSafeArea(.all)
+    }
+    
+    var addHeroButton: some View {
+        Button {
+            /// Resets the `FoodForm.Fields` and `FoodForm.Sources` fields
+            didTapAddFood()
+            
+            /// Actually shows the `View` for the `FoodForm` that we were passed in
+            showingAddFood = true
+            
+            /// Resigns focus on search and hides the hero button
+            searchIsFocused = false
+            showingAddHeroButton = false
+            
+        } label: {
+            Label("Food", systemImage: FoodType.food.systemImage)
         }
     }
     
+    var addHeroMenu: some View {
+        Menu {
+            addHeroButton
+            Button {
+                didTapAddFood()
+            } label: {
+                Label("Recipe", systemImage: FoodType.recipe.systemImage)
+            }
+            Button {
+                didTapAddFood()
+            } label: {
+                Label("Plate", systemImage: FoodType.plate.systemImage)
+            }
+        } label: {
+            Image(systemName:  "plus")
+                .font(.system(size: 25))
+                .fontWeight(.medium)
+                .foregroundColor(.white)
+                .frame(width: 48, height: 48)
+                .background(
+                    ZStack {
+                        Circle()
+                            .foregroundStyle(Color.accentColor.gradient)
+                    }
+                    .shadow(color: Color(.black).opacity(0.2), radius: 3, x: 0, y: 3)
+                )
+        }
+        .contentShape(Rectangle())
+        .simultaneousGesture(TapGesture().onEnded {
+            Haptics.selectionFeedback()
+        })
+    }
     var searchableView: some View {
         var content: some View {
 //            ZStack {
@@ -485,4 +524,13 @@ public struct FoodSearch: View {
             Text("Public Datasets")
         }
     }
+}
+
+struct FoodSearchConstants {
+    
+    /// ** Hardcoded and repeated **
+    static let largeDeviceWidthCutoff: CGFloat = 850.0
+    static let keyboardHeight: CGFloat = UIScreen.main.bounds.height < largeDeviceWidthCutoff
+    ? 291
+    : 301
 }
