@@ -220,8 +220,8 @@ public struct FoodSearch<Content: View>: View {
             HStack {
                 Spacer()
                 if showingAddHeroButton {
-                    addHeroButton
-//                    addHeroMenu
+//                    addHeroButton
+                    addHeroMenu
                         .transition(.opacity)
                 }
             }
