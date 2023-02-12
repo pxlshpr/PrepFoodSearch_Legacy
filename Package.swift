@@ -17,6 +17,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pxlshpr/FoodLabel", from: "0.0.30"),
         .package(url: "https://github.com/pxlshpr/PrepDataTypes", from: "0.0.241"),
+        .package(url: "https://github.com/pxlshpr/PrepCoreDataStack", from: "0.0.29"),
         .package(url: "https://github.com/pxlshpr/PrepNetworkController", from: "0.0.22"),
         .package(url: "https://github.com/pxlshpr/PrepViews", from: "0.0.140"),
         .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.86"),
@@ -35,6 +36,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Camera", package: "swiftuicamera"),
                 .product(name: "PrepDataTypes", package: "prepdatatypes"),
+                .product(name: "PrepCoreDataStack", package: "prepcoredatastack"),
                 .product(name: "PrepNetworkController", package: "prepnetworkcontroller"),
                 .product(name: "PrepViews", package: "prepviews"),
                 .product(name: "SwiftSugar", package: "swiftsugar"),

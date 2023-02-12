@@ -35,20 +35,26 @@ public struct FoodSearch<Content: View>: View {
     @State var isComparing = false
     
     @State var hasAppeared: Bool
+    @State var initialFocusCompleted: Bool = false
+    
     @State var shouldShowRecents: Bool = true
     @State var shouldShowSearchPrompt: Bool = false
     
     @State var showingAddFood = false
+    @State var showingAddPlate = false
+    @State var showingAddRecipe = false
 
     @State var showingAddHeroButton: Bool
+    @State var heroButtonOffsetOverride: Bool = false
     
     @Binding var searchIsFocused: Bool
 
     let didTapClose: (() -> ())?
     let didTapFood: (Food) -> ()
     let didTapMacrosIndicatorForFood: (Food) -> ()
-    let didTapAddFood: () -> ()
     
+    let didTapAdd: (FoodType) -> ()
+
     let focusOnAppear: Bool
     let isRootInNavigationStack: Bool
     
@@ -63,7 +69,7 @@ public struct FoodSearch<Content: View>: View {
         shouldDelayContents: Bool = true,
         focusOnAppear: Bool = false,
         searchIsFocused: Binding<Bool>,
-        didTapAddFood: @escaping () -> (),
+        didTapAdd: @escaping (FoodType) -> (),
         didTapClose: (() -> ())? = nil,
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
@@ -87,10 +93,11 @@ public struct FoodSearch<Content: View>: View {
         self.focusOnAppear = focusOnAppear
         
         //TODO: Replace this with a single action handler and an (associated) enum
-        self.didTapAddFood = didTapAddFood
         self.didTapClose = didTapClose
         self.didTapFood = didTapFood
         self.didTapMacrosIndicatorForFood = didTapMacrosIndicatorForFood
+        
+        self.didTapAdd = didTapAdd
         
         _showingAddHeroButton = State(initialValue: focusOnAppear)
         _hasAppeared = State(initialValue: shouldDelayContents ? false : true)
@@ -112,6 +119,10 @@ public struct FoodSearch<Content: View>: View {
                     hasAppeared = true
                 }
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                initialFocusCompleted = true
+            }
+
         }
         .transition(.opacity)
 //        .navigationTitle("Search")
@@ -124,8 +135,27 @@ public struct FoodSearch<Content: View>: View {
         .onChange(of: searchIsFocused, perform: searchIsFocusedChanged)
 //        .onChange(of: showingAddFood, perform: showingAddFoodChanged)
         .fullScreenCover(isPresented: $showingAddFood) { foodFormSheet }
+        .sheet(isPresented: $showingAddPlate) { plateFormSheet }
+        .sheet(isPresented: $showingAddRecipe) { recipeFormSheet }
     }
     
+    var plateFormSheet: some View {
+        NavigationStack {
+            FormStyledScrollView {
+                FormStyledSection {
+                    Button("Add Food") {
+                        
+                    }
+                }
+            }
+            .navigationTitle("New Plate")
+        }
+    }
+
+    var recipeFormSheet: some View {
+        RecipeForm(foodForm: foodForm)
+    }
+
     var foodFormSheet: some View {
         foodForm()
 //        FoodForm(fields: foodFormFields, sources: foodFormSources, extractor: foodFormExtractor) { formOutput in
@@ -141,7 +171,7 @@ public struct FoodSearch<Content: View>: View {
     func hideHeroAddButton() {
         withAnimation {
             if showingAddHeroButton {
-                showingAddHeroButton = false
+//                showingAddHeroButton = false
             }
         }
     }
@@ -215,54 +245,71 @@ public struct FoodSearch<Content: View>: View {
     }
     
     var addHeroLayer: some View {
-        VStack {
+        
+        var bottomPadding: CGFloat {
+            (searchIsFocused || !initialFocusCompleted) ? 65 + 5 : 65
+        }
+        
+        var yOffset: CGFloat {
+            heroButtonOffsetOverride
+            ? FoodSearchConstants.keyboardHeight
+            : 0
+        }
+        
+        return VStack {
             Spacer()
             HStack {
                 Spacer()
-                if showingAddHeroButton {
+                if !showingAddHeroButton {
 //                    addHeroButton
                     addHeroMenu
+                        .offset(y: yOffset)
                         .transition(.opacity)
                 }
             }
             .padding(.horizontal, 20)
         }
-//        .ignoresSafeArea(.keyboard)
-        .padding(.bottom, 65 + 10)
-//        .edgesIgnoringSafeArea(.all)
+        .padding(.bottom, bottomPadding)
     }
     
     var addHeroButton: some View {
         Button {
             /// Resets the `FoodForm.Fields` and `FoodForm.Sources` fields
-            didTapAddFood()
+            didTapAdd(.food)
             
             /// Actually shows the `View` for the `FoodForm` that we were passed in
-            showingAddFood = true
-            
-            /// Resigns focus on search and hides the hero button
-            searchIsFocused = false
-            showingAddHeroButton = false
+//            showingAddFood = true
+//
+//            /// Resigns focus on search and hides the hero button
+//            searchIsFocused = false
+//            showingAddHeroButton = false
             
         } label: {
             Label("Food", systemImage: FoodType.food.systemImage)
         }
     }
     
-    var addHeroMenu: some View {
-        Menu {
-            addHeroButton
-            Button {
-                didTapAddFood()
-            } label: {
-                Label("Recipe", systemImage: FoodType.recipe.systemImage)
-            }
-            Button {
-                didTapAddFood()
-            } label: {
-                Label("Plate", systemImage: FoodType.plate.systemImage)
-            }
+    var addPlateButton: some View {
+        Button {
+            didTapAdd(.plate)
         } label: {
+            Label("Plate", systemImage: FoodType.plate.systemImage)
+        }
+    }
+    
+    var addRecipeButton: some View {
+        Button {
+            didTapAdd(.recipe)
+//            showingAddRecipe = true
+//            searchIsFocused = false
+//            showingAddHeroButton = false
+        } label: {
+            Label("Recipe", systemImage: FoodType.recipe.systemImage)
+        }
+    }
+    
+    var addHeroMenu: some View {
+        var label: some View {
             Image(systemName:  "plus")
                 .font(.system(size: 25))
                 .fontWeight(.medium)
@@ -275,6 +322,14 @@ public struct FoodSearch<Content: View>: View {
                     }
                     .shadow(color: Color(.black).opacity(0.2), radius: 3, x: 0, y: 3)
                 )
+        }
+        
+        return Menu {
+            addHeroButton
+            addRecipeButton
+            addPlateButton
+        } label: {
+            label
         }
         .contentShape(Rectangle())
         .simultaneousGesture(TapGesture().onEnded {
@@ -409,22 +464,22 @@ public struct FoodSearch<Content: View>: View {
         .listRowBackground(FormCellBackground())
     }
     
-    func foodButton(for food: Food) -> some View {
-        Button {
-            /// This is crucial to avoid having the search elements floating on top when we come back this view.
-            /// This has something to do with triggering the navigation push from a list element.
-            if searchIsFocused {
-                hideHeroAddButton()
+    func tappedFood(_ food: Food) {
+        if searchIsFocused {
+//            didTapFood(food)
+            searchIsFocused = false
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 didTapFood(food)
 //                searchIsFocused = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    searchIsFocused = false
-//                    didTapFood(food)
-                }
-            } else {
-                hideHeroAddButton()
-                didTapFood(food)
-            }
+//            }
+        } else {
+            didTapFood(food)
+        }
+    }
+    
+    func foodButton(for food: Food) -> some View {
+        Button {
+            tappedFood(food)
         } label: {
             FoodCell(
                 food: food,
@@ -533,4 +588,87 @@ struct FoodSearchConstants {
     static let keyboardHeight: CGFloat = UIScreen.main.bounds.height < largeDeviceWidthCutoff
     ? 291
     : 301
+}
+
+import PrepCoreDataStack
+
+struct RecipeForm<Content: View>: View {
+    
+    @State var showingFoodSearch = false
+    @State var showingAddRecipe = false
+    @State var searchIsFocused: Bool = false
+    
+    let foodForm: () -> Content
+    
+    init(@ViewBuilder foodForm: @escaping () -> Content) {
+        self.foodForm = foodForm
+    }
+
+    var body: some View {
+        NavigationStack {
+            FormStyledScrollView {
+                FormStyledSection {
+                    Button("Add Food") {
+                        showingFoodSearch = true
+                    }
+                }
+            }
+            .sheet(isPresented: $showingFoodSearch) { foodSearch }
+            .sheet(isPresented: $showingAddRecipe) { recipeForm }
+            .navigationTitle("New Recipe")
+        }
+    }
+    
+    var recipeForm: some View {
+        RecipeForm(foodForm: foodForm)
+    }
+    
+    var foodSearch: some View {
+        func didTapFood(_ food: Food) {
+//            Haptics.feedback(style: .soft)
+//            viewModel.setFood(food)
+//
+//            if isInitialFoodSearch {
+//                viewModel.path = [.mealItemForm]
+//            } else {
+//                dismiss()
+//            }
+        }
+        
+        func didTapMacrosIndicatorForFood(_ food: Food) {
+//            Haptics.feedback(style: .soft)
+//            foodToShowMacrosFor = food
+        }
+        
+        func didTapClose() {
+//            Haptics.feedback(style: .soft)
+//            actionHandler(.dismiss)
+        }
+        
+        func didTapAdd(_ foodType: FoodType) {
+            switch foodType {
+            case .food:
+                break
+            case .recipe:
+                showingAddRecipe = true
+            case .plate:
+                break
+            }
+        }
+
+        return NavigationStack {
+            FoodSearch(
+                foodForm: foodForm,
+                dataProvider: DataManager.shared,
+                isRootInNavigationStack: true,
+                shouldDelayContents: true,
+                focusOnAppear: true,
+                searchIsFocused: $searchIsFocused,
+                didTapAdd: didTapAdd,
+                didTapClose: didTapClose,
+                didTapFood: didTapFood,
+                didTapMacrosIndicatorForFood: didTapMacrosIndicatorForFood
+            )
+        }
+    }
 }

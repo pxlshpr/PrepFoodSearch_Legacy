@@ -79,25 +79,45 @@ extension FoodSearch {
     
     var trailingContent: some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
-            addButton
+            addMenu
         }
+    }
+    
+    var addMenu: some View {
+        var label: some View {
+            Image(systemName: "plus")
+                .frame(width: 50, height: 50, alignment: .trailing)
+        }
+        
+        return Menu {
+            addHeroButton
+            addRecipeButton
+            addPlateButton
+        } label: {
+            label
+        }
+        .contentShape(Rectangle())
+        .simultaneousGesture(TapGesture().onEnded {
+            Haptics.selectionFeedback()
+        })
     }
     
     @ViewBuilder
     var addButton: some View {
-        if !showingAddHeroButton {
+//        if !showingAddHeroButton {
             Button {
-                didTapAddFood()
+                didTapAdd(.food)
                 Haptics.feedback(style: .soft)
                 showingAddFood = true
             } label: {
                 Image(systemName: "plus")
-                    .frame(width: 50, height: 50)
+                    .frame(width: 50, height: 50, alignment: .trailing)
+                    .background(.green)
                     .matchedGeometryEffect(id: "hero-plus", in: namespace)
             }
             .contentShape(Rectangle())
             .transition(.opacity)
-        }
+//        }
     }
 
     var principalContent: some ToolbarContent {
