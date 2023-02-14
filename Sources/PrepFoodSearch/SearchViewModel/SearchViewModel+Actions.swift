@@ -25,14 +25,14 @@ extension SearchViewModel {
     
     private func loadMoreContent() {
         guard !isLoadingPage && canLoadMorePages else {
-            print("✨ Not loading more — isLoadingPage: \(isLoadingPage), canLoadMorePages: \(canLoadMorePages)")
+            cprint("✨ Not loading more — isLoadingPage: \(isLoadingPage), canLoadMorePages: \(canLoadMorePages)")
             return
         }
         
         isLoadingPage = true
         
         Task {
-            print("✨ Sending request for page: \(currentPage)")
+            cprint("✨ Sending request for page: \(currentPage)")
 //            let params = ServerFoodSearchParams(string: searchText, page: currentPage, per: 25)
 //            let page = try await networkController.searchFoods(params: params)
 //            await MainActor.run {
@@ -78,7 +78,7 @@ extension SearchViewModel {
 //                let newFoods = try await networkController.foods(for: results)
 //                foods.append(contentsOf: newFoods)
 //            } catch {
-//                print("Error getting foods: \(error)")
+//                cprint("Error getting foods: \(error)")
 //            }
         }
     }

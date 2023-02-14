@@ -30,11 +30,11 @@ public class SearchManager: ObservableObject {
             do {
                 try await self.search(scope: .backend, with: self.searchViewModel.searchText)
                 try await self.search(scope: .verifiedLocal, with: self.searchViewModel.searchText)
-                print("🔎 Backend Search completed in \(CFAbsoluteTimeGetCurrent()-start)s")
+                cprint("🔎 Backend Search completed in \(CFAbsoluteTimeGetCurrent()-start)s")
             } catch let error where error is CancellationError {
-                print("🔎✋🏽 Backend Search was cancelled")
+                cprint("🔎✋🏽 Backend Search was cancelled")
             } catch {
-                print("🔎⚠️ Unhandled error during search: \(error)")
+                cprint("🔎⚠️ Unhandled error during search: \(error)")
             }
         }
     }
@@ -67,20 +67,20 @@ public class SearchManager: ObservableObject {
                 for try await result in group {
                     switch result {
                     case .success(let scope):
-                        print("🔎 Search Scope: \(scope) completed in \(CFAbsoluteTimeGetCurrent()-start)s")
+                        cprint("🔎 Search Scope: \(scope) completed in \(CFAbsoluteTimeGetCurrent()-start)s")
                     case .failure(let searchError):
                         switch searchError {
                         case .cancelled(let scope):
-                            print("🔎✋🏽 Search was cancelled during scope: \(scope)")
+                            cprint("🔎✋🏽 Search was cancelled during scope: \(scope)")
                             isCancelled = true
                         case .unhandledError(let scope, let error):
-                            print("🔎⚠️ Unhandled error during \(scope) search: \(error)")
+                            cprint("🔎⚠️ Unhandled error during \(scope) search: \(error)")
                         }
                     }
                 }
 
                 if !isCancelled {
-                    print("🔎✅ Search completed in \(CFAbsoluteTimeGetCurrent()-start)s")
+                    cprint("🔎✅ Search completed in \(CFAbsoluteTimeGetCurrent()-start)s")
                 }
             }
         }

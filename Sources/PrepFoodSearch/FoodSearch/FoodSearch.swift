@@ -114,8 +114,8 @@ public struct FoodSearch<Content: View>: View {
     public var body: some View {
         content
         .onAppear {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                withAnimation {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+//                withAnimation(.interactiveSpring()) {
 //                    hasAppeared = true
 //                }
 //            }
@@ -124,7 +124,6 @@ public struct FoodSearch<Content: View>: View {
 //            }
         }
         .transition(.opacity)
-//        .navigationTitle("Search")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { trailingContent }
         .toolbar { principalContent }
@@ -132,10 +131,27 @@ public struct FoodSearch<Content: View>: View {
         .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
         .onChange(of: scenePhase, perform: scenePhaseChanged)
         .onChange(of: searchIsFocused, perform: searchIsFocusedChanged)
-//        .onChange(of: showingAddFood, perform: showingAddFoodChanged)
         .fullScreenCover(isPresented: $showingAddFood) { foodFormSheet }
         .sheet(isPresented: $showingAddPlate) { plateFormSheet }
         .sheet(isPresented: $showingAddRecipe) { recipeFormSheet }
+    }
+    
+    @ViewBuilder
+    var content: some View {
+//        if !hasAppeared {
+//            background
+//        } else {
+            ZStack {
+                list
+//                searchableView
+//                addHeroLayer
+                fakeTextField
+            }
+            .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
+            .sheet(isPresented: $showingFilters) { filtersSheet }
+            .onChange(of: isComparing, perform: isComparingChanged)
+            .background(background)
+//        }
     }
     
     var plateFormSheet: some View {
@@ -225,24 +241,7 @@ public struct FoodSearch<Content: View>: View {
             }
         }
     }
-    
-    @ViewBuilder
-    var content: some View {
-//        if !hasAppeared {
-//            background
-//        } else {
-            ZStack {
-                searchableView
-                addHeroLayer
-                fakeTextField
-            }
-            .sheet(isPresented: $showingBarcodeScanner) { barcodeScanner }
-            .sheet(isPresented: $showingFilters) { filtersSheet }
-            .onChange(of: isComparing, perform: isComparingChanged)
-            .background(background)
-//        }
-    }
-    
+
     var addHeroLayer: some View {
         
         var bottomPadding: CGFloat {
@@ -376,12 +375,13 @@ public struct FoodSearch<Content: View>: View {
 
     @ViewBuilder
     var list: some View {
-        Color.clear
-//        if shouldShowRecents {
-//            recentsList
-//        } else {
-//            resultsList
-//        }
+//        Text("hi")
+//        Color.clear
+        if shouldShowRecents {
+            recentsList
+        } else {
+            resultsList
+        }
     }
 
     var resultsList: some View {

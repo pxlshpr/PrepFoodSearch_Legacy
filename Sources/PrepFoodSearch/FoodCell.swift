@@ -181,7 +181,7 @@
 //                        protein: food.p,
 //                        isSelectable: .constant(false),
 //                        didToggleSelection: { isSelected in
-//                            print("\(food) selection changed to: \(isSelected)")
+//                            cprint("\(food) selection changed to: \(isSelected)")
 //                        }
 //                    )
 //                }
