@@ -114,15 +114,14 @@ public struct FoodSearch<Content: View>: View {
     public var body: some View {
         content
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation {
-                    hasAppeared = true
-                }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                initialFocusCompleted = true
-            }
-
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                withAnimation {
+//                    hasAppeared = true
+//                }
+//            }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+//                initialFocusCompleted = true
+//            }
         }
         .transition(.opacity)
 //        .navigationTitle("Search")
@@ -229,9 +228,9 @@ public struct FoodSearch<Content: View>: View {
     
     @ViewBuilder
     var content: some View {
-        if !hasAppeared {
-            background
-        } else {
+//        if !hasAppeared {
+//            background
+//        } else {
             ZStack {
                 searchableView
                 addHeroLayer
@@ -241,7 +240,7 @@ public struct FoodSearch<Content: View>: View {
             .sheet(isPresented: $showingFilters) { filtersSheet }
             .onChange(of: isComparing, perform: isComparingChanged)
             .background(background)
-        }
+//        }
     }
     
     var addHeroLayer: some View {
@@ -348,7 +347,8 @@ public struct FoodSearch<Content: View>: View {
             searchText: $searchViewModel.searchText,
             promptSuffix: "Foods",
             focused: $searchIsFocused,
-            focusOnAppear: focusOnAppear,
+            focusOnAppear: false,
+//            focusOnAppear: focusOnAppear,
             isHidden: $isComparing,
             showKeyboardDismiss: true,
 //            showDismiss: false,
@@ -376,11 +376,12 @@ public struct FoodSearch<Content: View>: View {
 
     @ViewBuilder
     var list: some View {
-        if shouldShowRecents {
-            recentsList
-        } else {
-            resultsList
-        }
+        Color.clear
+//        if shouldShowRecents {
+//            recentsList
+//        } else {
+//            resultsList
+//        }
     }
 
     var resultsList: some View {
