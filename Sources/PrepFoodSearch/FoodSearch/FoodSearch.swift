@@ -142,8 +142,8 @@ public struct FoodSearch<Content: View>: View {
 //            background
 //        } else {
             ZStack {
-                list
-//                searchableView
+//                list
+                searchableView
 //                addHeroLayer
                 fakeTextField
             }
