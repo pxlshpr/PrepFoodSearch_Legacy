@@ -203,6 +203,7 @@ public struct FoodSearch<Content: View>: View {
         switch newPhase {
         case .background:
             wasInBackground = true
+//            searchIsFocused = false
         case .active:
             if wasInBackground, showingAddFood {
                 focusFakeKeyboardWhenVisible = true
