@@ -309,7 +309,7 @@ public struct FoodSearch<Content: View>: View {
     
     var addHeroMenu: some View {
         var label: some View {
-            Image(systemName:  "plus")
+            Image(systemName: "plus")
                 .font(.system(size: 25))
                 .fontWeight(.medium)
                 .foregroundColor(.white)
@@ -323,17 +323,24 @@ public struct FoodSearch<Content: View>: View {
                 )
         }
         
-        return Menu {
-            addHeroButton
-            addRecipeButton
-            addPlateButton
-        } label: {
-            label
+        var menu: some View {
+            Menu {
+                addHeroButton
+                addRecipeButton
+                addPlateButton
+            } label: {
+                label
+            }
+            .contentShape(Rectangle())
+            .simultaneousGesture(TapGesture().onEnded {
+                Haptics.selectionFeedback()
+            })
         }
-        .contentShape(Rectangle())
-        .simultaneousGesture(TapGesture().onEnded {
-            Haptics.selectionFeedback()
-        })
+        
+        return ZStack {
+            label
+            menu
+        }
     }
     var searchableView: some View {
         var content: some View {
