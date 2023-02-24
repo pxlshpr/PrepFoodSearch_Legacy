@@ -101,24 +101,6 @@ extension FoodSearch {
             Haptics.selectionFeedback()
         })
     }
-    
-    @ViewBuilder
-    var addButton: some View {
-//        if !showingAddHeroButton {
-            Button {
-                didTapAdd(.food)
-                Haptics.feedback(style: .soft)
-                showingAddFood = true
-            } label: {
-                Image(systemName: "plus")
-                    .frame(width: 50, height: 50, alignment: .trailing)
-                    .background(.green)
-                    .matchedGeometryEffect(id: "hero-plus", in: namespace)
-            }
-            .contentShape(Rectangle())
-            .transition(.opacity)
-//        }
-    }
 
     var principalContent: some ToolbarContent {
         ToolbarItemGroup(placement: .principal) {
