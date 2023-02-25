@@ -128,7 +128,6 @@ public struct FoodSearch<Content: View>: View {
         .onChange(of: scenePhase, perform: scenePhaseChanged)
         .onChange(of: searchIsFocused, perform: searchIsFocusedChanged)
 //        .fullScreenCover(isPresented: $showingAddFood) { foodFormSheet }
-        .fullScreenCover(isPresented: $showingAddFood) { foodFormNew }
         .sheet(isPresented: $showingAddPlate) { plateFormSheet }
         .sheet(isPresented: $showingAddRecipe) { recipeFormSheet }
     }
@@ -280,8 +279,8 @@ public struct FoodSearch<Content: View>: View {
     
     var addHeroButton: some View {
         Button {
-//            FoodForm.Fields.shared.reset()
-//            FoodForm.Sources.shared.reset()
+            FoodForm.Fields.shared.reset()
+            FoodForm.Sources.shared.reset()
             
             /// Actually shows the `View` for the `FoodForm` that we were passed in
             showingAddFood = true
