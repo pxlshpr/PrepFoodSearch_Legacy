@@ -25,7 +25,7 @@ let package = Package(
         .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.369"),
         .package(url: "https://github.com/exyte/ActivityIndicatorView", from: "1.1.0"),
 
-        .package(url: "https://github.com/pxlshpr/PrepFoodForm", from: "0.1.119"),
+        .package(url: "https://github.com/pxlshpr/PrepFoodForm", from: "0.1.120"),
         .package(url: "https://github.com/pxlshpr/FoodLabelExtractor", from: "0.0.32"),
     ],
     targets: [
