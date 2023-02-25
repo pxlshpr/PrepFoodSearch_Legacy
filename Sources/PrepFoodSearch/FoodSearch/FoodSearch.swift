@@ -6,8 +6,10 @@ import ActivityIndicatorView
 import Camera
 import SwiftSugar
 import PrepViews
+import PrepFoodForm
+//import FoodLabelExtractor
 
-public struct FoodSearch: View {
+public struct FoodSearch<Content: View>: View {
     
     @Namespace var namespace
     @Environment(\.scenePhase) var scenePhase
@@ -34,6 +36,10 @@ public struct FoodSearch: View {
     @State var shouldShowRecents: Bool = true
     @State var shouldShowSearchPrompt: Bool = false
     
+    @State var showingAddFood = false
+    @State var showingAddPlate = false
+    @State var showingAddRecipe = false
+
     @State var showingAddHeroButton: Bool
     @State var heroButtonOffsetOverride: Bool = false
     
@@ -48,7 +54,12 @@ public struct FoodSearch: View {
     let focusOnAppear: Bool
     let isRootInNavigationStack: Bool
     
+//    let foodForm: Content
+    let foodForm: () -> Content
+
     public init(
+        @ViewBuilder foodForm: @escaping () -> Content,
+//        fields: FoodForm.Fields, sources: FoodForm.Sources, extractor: Extractor,
         dataProvider: SearchDataProvider,
         isRootInNavigationStack: Bool,
         shouldDelayContents: Bool = true,
@@ -59,7 +70,12 @@ public struct FoodSearch: View {
         didTapFood: @escaping ((Food) -> ()),
         didTapMacrosIndicatorForFood: @escaping ((Food) -> ())
     ) {
+        self.foodForm = foodForm
         self.isRootInNavigationStack = isRootInNavigationStack
+        
+//        self.foodFormFields = fields
+//        self.foodFormSources = sources
+//        self.foodFormExtractor = extractor
         
         let searchViewModel = SearchViewModel(recents: dataProvider.recentFoods)
         _searchViewModel = StateObject(wrappedValue: searchViewModel)
@@ -111,6 +127,20 @@ public struct FoodSearch: View {
         .onChange(of: searchViewModel.searchText, perform: searchTextChanged)
         .onChange(of: scenePhase, perform: scenePhaseChanged)
         .onChange(of: searchIsFocused, perform: searchIsFocusedChanged)
+//        .fullScreenCover(isPresented: $showingAddFood) { foodFormSheet }
+        .fullScreenCover(isPresented: $showingAddFood) { foodFormNew }
+        .sheet(isPresented: $showingAddPlate) { plateFormSheet }
+        .sheet(isPresented: $showingAddRecipe) { recipeFormSheet }
+    }
+    
+    var foodFormNew: some View {
+        
+        func didSaveFood(_ formOutput: FoodFormOutput) {
+            Haptics.successFeedback()
+//            addNewFood(formOutput)
+        }
+        
+        return FoodForm(isPresented: $showingAddFood, didSave: didSaveFood)
     }
     
     @ViewBuilder
@@ -131,6 +161,33 @@ public struct FoodSearch: View {
 //        }
     }
     
+    var plateFormSheet: some View {
+        NavigationStack {
+            FormStyledScrollView {
+                FormStyledSection {
+                    Button("Add Food") {
+                        
+                    }
+                }
+            }
+            .navigationTitle("New Plate")
+        }
+    }
+
+    var recipeFormSheet: some View {
+        RecipeForm(foodForm: foodForm)
+    }
+
+    var foodFormSheet: some View {
+        foodForm()
+//        FoodForm(fields: foodFormFields, sources: foodFormSources, extractor: foodFormExtractor) { formOutput in
+//            didAddFood(formOutput)
+//        }
+//        .onDisappear {
+//            foodFormExtractor.cancelAllTasks()
+//        }
+    }
+
     @State var initialSearchIsFocusedChangeIgnored: Bool = false
     
     func hideHeroAddButton() {
@@ -155,7 +212,7 @@ public struct FoodSearch: View {
             wasInBackground = true
 //            searchIsFocused = false
         case .active:
-            if wasInBackground {
+            if wasInBackground, showingAddFood {
                 focusFakeKeyboardWhenVisible = true
                 wasInBackground = false
             }
@@ -223,15 +280,15 @@ public struct FoodSearch: View {
     
     var addHeroButton: some View {
         Button {
-            /// Resets the `FoodForm.Fields` and `FoodForm.Sources` fields
-            didTapAdd(.food)
+//            FoodForm.Fields.shared.reset()
+//            FoodForm.Sources.shared.reset()
             
             /// Actually shows the `View` for the `FoodForm` that we were passed in
-//            showingAddFood = true
-//
-//            /// Resigns focus on search and hides the hero button
-//            searchIsFocused = false
-//            showingAddHeroButton = false
+            showingAddFood = true
+
+            /// Resigns focus on search and hides the hero button
+            searchIsFocused = false
+            showingAddHeroButton = false
             
         } label: {
             Label("Food", systemImage: FoodType.food.systemImage)
@@ -366,6 +423,32 @@ public struct FoodSearch: View {
             } else if !searchViewModel.allMyFoods.isEmpty {
                 allMyFoodsSection
             }
+//            createSection
+//            Section(header: Text("")) {
+//                EmptyView()
+//            }
+        }
+    }
+    
+    var createSection: some View {
+        return Group {
+            Section {
+                Button {
+                    searchIsFocused = false
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        showingAddFood = true
+//                    }
+//                    didTapAddFood()
+                } label: {
+                    Label("Create New Food", systemImage: "plus")
+                }
+//                Button {
+//
+//                } label: {
+//                    Label("Scan a Food Label", systemImage: "text.viewfinder")
+//                }
+            }
+            .listRowBackground(FormCellBackground())
         }
     }
     
@@ -525,13 +608,16 @@ struct FoodSearchConstants {
 
 import PrepCoreDataStack
 
-struct RecipeForm: View {
+struct RecipeForm<Content: View>: View {
     
     @State var showingFoodSearch = false
     @State var showingAddRecipe = false
     @State var searchIsFocused: Bool = false
     
-    init() {
+    let foodForm: () -> Content
+    
+    init(@ViewBuilder foodForm: @escaping () -> Content) {
+        self.foodForm = foodForm
     }
 
     var body: some View {
@@ -550,7 +636,7 @@ struct RecipeForm: View {
     }
     
     var recipeForm: some View {
-        RecipeForm()
+        RecipeForm(foodForm: foodForm)
     }
     
     var foodSearch: some View {
@@ -588,6 +674,7 @@ struct RecipeForm: View {
 
         return NavigationStack {
             FoodSearch(
+                foodForm: foodForm,
                 dataProvider: DataManager.shared,
                 isRootInNavigationStack: true,
                 shouldDelayContents: true,

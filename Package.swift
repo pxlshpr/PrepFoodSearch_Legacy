@@ -15,18 +15,18 @@ let package = Package(
             targets: ["PrepFoodSearch"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pxlshpr/FoodLabel", from: "0.0.30"),
-        .package(url: "https://github.com/pxlshpr/PrepDataTypes", from: "0.0.241"),
-        .package(url: "https://github.com/pxlshpr/PrepCoreDataStack", from: "0.0.29"),
+        .package(url: "https://github.com/pxlshpr/FoodLabel", from: "0.0.59"),
+        .package(url: "https://github.com/pxlshpr/PrepDataTypes", from: "0.0.278"),
+        .package(url: "https://github.com/pxlshpr/PrepCoreDataStack", from: "0.0.30"),
         .package(url: "https://github.com/pxlshpr/PrepNetworkController", from: "0.0.22"),
-        .package(url: "https://github.com/pxlshpr/PrepViews", from: "0.0.140"),
-        .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.86"),
+        .package(url: "https://github.com/pxlshpr/PrepViews", from: "0.0.147"),
+        .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.87"),
         .package(url: "https://github.com/pxlshpr/SwiftUICamera", from: "0.0.39"),
-        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.366"),
+        .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.369"),
         .package(url: "https://github.com/exyte/ActivityIndicatorView", from: "1.1.0"),
 
-//        .package(url: "https://github.com/pxlshpr/PrepFoodForm", from: "0.1.115"),
-//        .package(url: "https://github.com/pxlshpr/FoodLabelExtractor", from: "0.0.31"),
+        .package(url: "https://github.com/pxlshpr/PrepFoodForm", from: "0.1.119"),
+        .package(url: "https://github.com/pxlshpr/FoodLabelExtractor", from: "0.0.32"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -44,8 +44,8 @@ let package = Package(
                 .product(name: "ActivityIndicatorView", package: "activityindicatorview"),
                 .product(name: "SwiftUISugar", package: "swiftuisugar"),
 
-//                .product(name: "PrepFoodForm", package: "prepfoodform"),
-//                .product(name: "FoodLabelExtractor", package: "foodlabelextractor"),
+                .product(name: "PrepFoodForm", package: "prepfoodform"),
+                .product(name: "FoodLabelExtractor", package: "foodlabelextractor"),
             ]),
         .testTarget(
             name: "PrepFoodSearchTests",
